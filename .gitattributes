@@ -1,0 +1,6 @@
+*.config linguist-language=nextflow
+*.nf.test linguist-language=nextflow
+modules/nf-core/** linguist-generated
+subworkflows/nf-core/** linguist-generated
+*.sif filter=lfs diff=lfs merge=lfs -text
+*.fastq.gz filter=lfs diff=lfs merge=lfs -text
