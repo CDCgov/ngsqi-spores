@@ -22,14 +22,14 @@ workflow QC {
 
     NANOCOMP(reads)
     ch_versions = ch_versions.mix(NANOCOMP.out.versions)
-    ch_multiqc_files = ch_multiqc_files.mix(NANOCOMP.out.stats)
+    //ch_multiqc_files = ch_multiqc_files.mix(NANOCOMP.out.stats_txt)
     
     NANOPLOT(reads)
     ch_versions = ch_versions.mix(NANOPLOT.out.versions)
-    ch_multiqc_files = ch_multiqc_files.mix(NANOPLOT.out.stats)
+    ch_multiqc_files = ch_multiqc_files.mix(NANOPLOT.out.txt)
     
     NANOQC(reads)
-    ch_versions = ch_versions.mix(NANOQC.out.versions)
+    //ch_versions = ch_versions.mix(NANOQC.out.versions)
     //ch_multiqc_files = ch_multiqc_files.mix(NANOQC.out.stats)  
    
    emit:
@@ -37,4 +37,6 @@ workflow QC {
    NANOPLOT.out.png
    NANOQC.out.html_1
    NANOQC.out.html_2
+   versions = ch_versions
+   multiqc = ch_multiqc_files
 }

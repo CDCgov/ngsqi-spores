@@ -30,9 +30,9 @@ process NANOQC {
         -o read2 \\
         ${ontfile[1]}
 
-    cat <<-END_VERSIONS > versions.yml
+cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        nanoqc: \$(echo \$(NanoQC --version 2>&1) | sed 's/^.*NanoQC //; s/ .*\$//')
-    END_VERSIONS
-    """
+        nanoqc: \$(nanoQC --version | sed 's/^.*nanoQC //; s/[^0-9.]//g')
+END_VERSIONS
+"""
 }
