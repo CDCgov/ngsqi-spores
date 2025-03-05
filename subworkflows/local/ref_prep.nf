@@ -36,10 +36,10 @@ workflow REF_PREP {
     BWA_INDEX(BEDTOOLS_MASKFASTA.out.fasta)
     ch_versions = ch_versions.mix(BWA_INDEX.out.versions)
 
-    PICARD(BWA_INDEX.out.index)
+    PICARD(BEDTOOLS_MASKFASTA.out.fasta)
     ch_versions = ch_versions.mix(PICARD.out.versions)
 
-    SAMTOOLS(BWA_INDEX.out.index)
+    SAMTOOLS(BEDTOOLS_MASKFASTA.out.fasta)
     ch_versions = ch_versions.mix(SAMTOOLS.out.versions)
 
    emit:
