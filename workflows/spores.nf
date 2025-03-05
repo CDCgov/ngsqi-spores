@@ -118,7 +118,7 @@ workflow SPORES {
     REF_PREP (
         params.fasta
     )
- 
+     ch_versions = ch_versions.mix(REF_PREP.out.versions)
     //
     // MODULE: MultiQC
     //
