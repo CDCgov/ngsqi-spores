@@ -6,10 +6,8 @@ process NANOQC {
     tuple val(meta), path(ontfile)
 
     output:
-    tuple val(meta), path("read1/*.html")                , emit: html_1
-    tuple val(meta), path("read1/*.log")                 , emit: log_1
-    tuple val(meta), path("read2/*.html")                , emit: html_2
-    tuple val(meta), path("read2/*.log")                 , emit: log_2
+    tuple val(meta), path("*.html")                , emit: html
+    tuple val(meta), path("*.log")                 , emit: log
     path  "versions.yml"                                 , emit: versions
 
     when:
@@ -22,13 +20,8 @@ process NANOQC {
     """
     nanoQC \\
         $args \\
-        -o read1 \\
-        ${ontfile[0]}
-
-    nanoQC \\
-        $args \\
-        -o read2 \\
-        ${ontfile[1]}
+        -o . \\
+        ${ontfile}
 
 cat <<-END_VERSIONS > versions.yml
     "${task.process}":
