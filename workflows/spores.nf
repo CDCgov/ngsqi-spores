@@ -64,12 +64,12 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoft
     */
 
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fasta ]
+def checkPathParamList = [ params.input, params.multiqc_config, params.fastas ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
-if (params.fasta) { fasta = file(params.fasta) } else { exit 1, 'Reference genome not specified!' }
+if (params.fastas) { ch_fastas = file(params.fastas) } else { exit 1, 'Reference genome not specified!' }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -92,11 +92,17 @@ workflow SPORES {
     )
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
     reads = INPUT_CHECK.out.reads
-    
-    QC (
-        reads
+
+    VALIDATE_FASTAS (
+        file(params.fastas)
     )
-    ch_versions = ch_versions.mix(QC.out.versions)
+    ch_versions = ch_versions.mix(VALIDATE_FASTAS.out.versions)
+    fastas = VALIDATE_FASTAS.out.fastas
+
+   // QC (
+   //     reads
+   // )
+  //  ch_versions = ch_versions.mix(QC.out.versions)
 
     // TODO: OPTIONAL, you can use nf-validation plugin to create an input channel from the samplesheet with Channel.fromSamplesheet("input")
     // See the documentation https://nextflow-io.github.io/nf-validation/samplesheets/fromSamplesheet/
@@ -109,16 +115,17 @@ workflow SPORES {
      //   INPUT_CHECK.out.reads
    // )
     //ch_versions = ch_versions.mix(FASTQC.out.versions.first())
-    ch_versions_unique = ch_versions.unique()
-    CUSTOM_DUMPSOFTWAREVERSIONS(ch_versions_unique.collectFile(name: 'collated_versions.yml'))
+    //ch_versions_unique = ch_versions.unique()
+   // CUSTOM_DUMPSOFTWAREVERSIONS(ch_versions_unique.collectFile(name: 'collated_versions.yml'))
 
     //
     // MODULE: REF_PREP
     //
-    REF_PREP (
-        params.fasta
-    )
-     ch_versions = ch_versions.mix(REF_PREP.out.versions)
+    REF_PREP ( fastas )
+    ch_versions = ch_versions.mix(REF_PREP.out.versions)
+    
+    ch_versions_unique = ch_versions.unique()
+    CUSTOM_DUMPSOFTWAREVERSIONS(ch_versions_unique.collectFile(name: 'collated_versions.yml'))
     //
     // MODULE: MultiQC
     //
@@ -141,6 +148,7 @@ workflow SPORES {
         ch_multiqc_logo.toList()
     )
     multiqc_report = MULTIQC.out.report.toList()
+
 }
 
 /*
