@@ -1,18 +1,23 @@
-process NANOSIM_ANALYSIS {
+process READANALYSIS {
    publishDir "${params.outdir}", mode: 'copy'
    errorStrategy 'ignore'
    tag "sample: ${sample_id}"
 
    input:
-   tuple val(sample_id), val(added_copy_number), val(iso_file_path), val(species_name), val(ref_accession), path(ref_genome), path(scaff_dir)
+   tuple val(sample_id), val(fastq)
+   tuple val(reference_id), val(ref_file), val(alt_reference)
 
    output:
-   tuple val(sample_id), val(added_copy_number), path("patched_${sample_id}"), val(species_name), val(ref_accession), path(ref_genome), emit: ragtag_patch_dirs optional true
-   path "versions.yml", emit: versions
+   tuple val(sample_id), val(fastq), val(alt_reference), path("${fastq}_${alt_reference}_error_model_fq"), emit:nanosim_model
    
    script:
    """
-
+   read_analysis.py genome \
+      -t 12 \
+      -i "${fastq}" \
+      -rg "${alt_reference}" \
+      --fastq \
+      -o "${fastq}_${alt_reference}_error_model_fq"
 
    //cat <<- 'END_VERSIONS' > versions.yml
    //"${task.process}":
