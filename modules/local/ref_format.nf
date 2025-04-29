@@ -1,6 +1,6 @@
 process REF_FORMAT {
     input:
-    path(fasta)
+    tuple val(meta), path(fastas)
 
     output:
     tuple val(meta), path("reference.fasta"), path("reference.copy.fasta"), emit: ref_tuple
@@ -10,7 +10,7 @@ process REF_FORMAT {
 
     """
     echo ${meta.id}
-    cp ${fasta} reference.fasta
+    cp ${fastas} reference.fasta
     cp reference.fasta reference.copy.fasta
 
     """
