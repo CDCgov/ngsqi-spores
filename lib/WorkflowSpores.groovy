@@ -15,8 +15,8 @@ class WorkflowSpores {
         genomeExistsError(params, log)
 
 
-        if (!params.fasta) {
-            Nextflow.error "Genome fasta file not specified with e.g. '--fasta genome.fa' or via a detectable config file."
+        if (!params.fastas) {
+            Nextflow.error "Fasta samplesheet file not specified with e.g. '--fastas fasta_samplesheet.csv' or via a detectable config file."
         }
     }
 
