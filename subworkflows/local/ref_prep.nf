@@ -15,14 +15,17 @@ include { SAMTOOLS_FAIDX as SAMTOOLS} from '../../modules/nf-core/samtools/faidx
 
 workflow REF_PREP {
     take:
-    fasta
+    fastas
 
 
     main:
     ch_versions = Channel.empty()
     ch_multiqc_files  = Channel.empty()
 
-    REF_FORMAT(fasta)
+    fastas.map { tuple(it[0], it[1]) }
+      .set { ref_fastas }
+
+    REF_FORMAT(ref_fastas)
     ref = REF_FORMAT.out.ref_tuple
     
     NUCMER(ref)
@@ -30,7 +33,7 @@ workflow REF_PREP {
 
     COORDSTOBED(NUCMER.out.delta)
 
-    BEDTOOLS_MASKFASTA( COORDSTOBED.out.bed, fasta)
+    BEDTOOLS_MASKFASTA( COORDSTOBED.out.bed, fastas)
     ch_versions = ch_versions.mix(BEDTOOLS_MASKFASTA.out.versions)
 
     BWA_INDEX(BEDTOOLS_MASKFASTA.out.fasta)
