@@ -9,7 +9,7 @@ process BEDTOOLS_MASKFASTA {
 
     input:
     tuple val(meta), path(bed)
-    path  fasta
+    tuple val(meta), path(fasta)
 
     output:
     tuple val(meta), path("*.fa"), emit: fasta
