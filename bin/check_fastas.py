@@ -8,14 +8,13 @@ from pathlib import Path
 logger = logging.getLogger()
 
 class RowChecker:
-    VALID_FORMATS = (
-        ".fa",
-        ".fasta",
-        ".fna",
-    )
+    VALID_FORMATS = (".fa", ".fasta", ".fna")
 
-    def __init__(self, fasta_col="fasta", chrom_col="chrom", pos_col="pos", seq_col="new_seq"):
+    def __init__(self, fasta_col="reference", path_col="path", clade_col="clade", var_col="var_id", chrom_col="chrom", pos_col="pos", seq_col="var_seq"):
         self._fasta_col = fasta_col
+        self._path_col = path_col
+        self._clade_col = clade_col
+        self._var_col = var_col
         self._chrom_col = chrom_col
         self._pos_col = pos_col
         self._seq_col = seq_col
@@ -23,112 +22,77 @@ class RowChecker:
         self.modified = []
 
     def validate_and_transform(self, row):
-        self._validate_fasta(row)
-        self._validate_chrom(row)
-        self._validate_pos(row)
-        self._validate_new_seq(row)
-        self._seen.add(row[self._fasta_col])
-        self.modified.append(row)
+        try:
+            self._validate_fasta(row)
+            self._validate_chrom(row)
+            self._validate_pos(row)
+            self._validate_seq(row)
+            self._seen.add(row[self._path_col])
+            self.modified.append(row) 
+        except AssertionError as error:
+            logger.error(f"Validation error: {error} in row {row}")
 
     def _validate_fasta(self, row):
-        """Assert that the FASTA file exists and has the correct format."""
-        fasta_file = row[self._fasta_col]
-        if len(fasta_file) <= 0:
+        # Retrieve the path to the FASTA file from the correct column
+        fasta_path = row.get(self._path_col, "").strip()
+
+        # Debugging: Print the path being checked
+        print(f"Checking FASTA file path: '{fasta_path}'")
+
+        if not fasta_path:
             raise AssertionError("FASTA file path is required.")
-        if not file(fasta_file).exists():
-            raise AssertionError(f"FASTA file does not exist: {fasta_file}")
-        if not any(fasta_file.endswith(extension) for extension in self.VALID_FORMATS):
-            raise AssertionError(
-                f"The FASTA file has an unrecognized extension: {fasta_file}\n"
-                f"It should be one of: {', '.join(self.VALID_FORMATS)}"
-            )
+        if not Path(fasta_path).exists():
+            raise AssertionError(f"FASTA file does not exist: {fasta_path}")
+        if not any(fasta_path.endswith(ext) for ext in self.VALID_FORMATS):
+            raise AssertionError(f"Unrecognized FASTA file extension: {fasta_path}. Allowed: {', '.join(self.VALID_FORMATS)}")
 
     def _validate_chrom(self, row):
-        """Assert that the chromosome field is non-empty."""
-        if len(row[self._chrom_col]) <= 0:
+        chrom = row.get(self._chrom_col, "").strip()
+        if not chrom:
             raise AssertionError("Chromosome field is required.")
 
     def _validate_pos(self, row):
-        """Assert that the position is a positive integer."""
-        pos = row[self._pos_col]
+        pos = row.get(self._pos_col, "").strip()
         if not pos.isdigit() or int(pos) <= 0:
             raise AssertionError("Position must be a positive integer.")
 
-    def _validate_new_seq(self, row):
-        """Assert that the new sequence is non-empty and consists of valid nucleotides."""
-        new_seq = row[self._seq_col]
-        if len(new_seq) <= 0:
+    def _validate_seq(self, row):
+        new_seq = row.get(self._seq_col, "").strip()
+        if not new_seq:
             raise AssertionError("New sequence is required.")
         if not all(nuc in "ACGT" for nuc in new_seq.upper()):
-            raise AssertionError("New sequence contains invalid characters. Allowed: A, C, G, T.")
-
-    def validate_unique_fasta(self):
-        """Assert that FASTA file paths are unique."""
-        if len(self._seen) != len(self.modified):
-            raise AssertionError("FASTA file paths must be unique.")
-
-def read_head(handle, num_lines=10):
-    lines = []
-    for idx, line in enumerate(handle):
-        if idx == num_lines:
-            break
-        lines.append(line)
-    return "".join(lines)
-
-def sniff_format(handle):
-    peek = read_head(handle)
-    handle.seek(0)
-    sniffer = csv.Sniffer()
-    dialect = sniffer.sniff(peek)
-    return dialect
+            raise AssertionError("Sequence contains invalid characters. Allowed: A, C, G, T.")
 
 def check_fasta_samplesheet(file_in, file_out):
-    required_columns = {"fasta", "chrom", "pos", "new_seq"}
+    required_columns = {"reference", "path", "clade", "var_id", "chrom", "pos", "var_seq"}
     with file_in.open(newline="") as in_handle:
-        reader = csv.DictReader(in_handle, dialect=sniff_format(in_handle))
+        reader = csv.DictReader(in_handle)
         if not required_columns.issubset(reader.fieldnames):
-            req_cols = ", ".join(required_columns)
-            logger.critical(f"The sample sheet **must** contain these column headers: {req_cols}.")
-            sys.exit(1)
+            raise ValueError(f"Missing required columns: {required_columns - set(reader.fieldnames)}")
         checker = RowChecker()
-        for i, row in enumerate(reader):
-            try:
-                checker.validate_and_transform(row)
-            except AssertionError as error:
-                logger.critical(f"{str(error)} On line {i + 2}.")
-                sys.exit(1)
-        checker.validate_unique_fasta()
-    header = list(reader.fieldnames)
-    with file_out.open(mode="w", newline="") as out_handle:
-        writer = csv.DictWriter(out_handle, header, delimiter=",")
-        writer.writeheader()
-        for row in checker.modified:
-            writer.writerow(row)
+        for row in reader:
+            checker.validate_and_transform(row)
+        with file_out.open(mode="w", newline="") as out_handle:
+            writer = csv.DictWriter(out_handle, fieldnames=reader.fieldnames)
+            writer.writeheader()
+            writer.writerows(checker.modified)
 
 def parse_args(argv=None):
-    parser = argparse.ArgumentParser(
-        description="Validate and transform a FASTA samplesheet.",
-        epilog="Example: python check_fasta_samplesheet.py samplesheet.csv samplesheet.valid.csv",
-    )
-    parser.add_argument("file_in", metavar="FILE_IN", type=Path, help="Input FASTA samplesheet in CSV or TSV format.")
-    parser.add_argument("file_out", metavar="FILE_OUT", type=Path, help="Transformed output samplesheet in CSV format.")
-    parser.add_argument(
-        "-l",
-        "--log-level",
-        help="The desired log level (default WARNING).",
-        choices=("CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"),
-        default="WARNING",
-    )
+    parser = argparse.ArgumentParser(description="Validate and transform a FASTA samplesheet.")
+    parser.add_argument("file_in", type=Path, help="Input FASTA samplesheet in CSV format.")
+    parser.add_argument("file_out", type=Path, help="Output validated FASTA samplesheet in CSV format.")
+    parser.add_argument("--log-level", default="WARNING", choices=("CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"), help="Set log level")
     return parser.parse_args(argv)
 
 def main(argv=None):
     args = parse_args(argv)
     logging.basicConfig(level=args.log_level, format="[%(levelname)s] %(message)s")
     if not args.file_in.is_file():
-        logger.error(f"The given input file {args.file_in} was not found!")
-        sys.exit(2)
+        logger.error(f"Input file not found: {args.file_in}")
+        sys.exit(1)
     args.file_out.parent.mkdir(parents=True, exist_ok=True)
     check_fasta_samplesheet(args.file_in, args.file_out)
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
+
