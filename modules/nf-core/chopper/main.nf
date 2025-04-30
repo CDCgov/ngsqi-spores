@@ -9,7 +9,7 @@ process CHOPPER {
 
     input:
     tuple val(meta), path(fastq)
-    path  fasta
+    //path  fasta
 
     output:
     tuple val(meta), path("*.fastq.gz") , emit: fastq
@@ -32,7 +32,6 @@ process CHOPPER {
         $fastq | \\
     chopper \\
         --threads $task.cpus \\
-        $fasta_filtering \\
         $args2 | \\
     gzip \\
         $args3 > ${prefix}.fastq.gz
