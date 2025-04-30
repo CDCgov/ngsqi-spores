@@ -20,7 +20,6 @@ process BEDTOOLS_MASKFASTA {
 
     script:
     def args = task.ext.args ?: ''
-    log.info "Meta information: ${meta}"
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     bedtools \\
