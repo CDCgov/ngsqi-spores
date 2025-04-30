@@ -23,8 +23,9 @@ workflow VALIDATE_FASTAS {
         }
         .set { fastas }
 
-    fastas.map { row -> tuple([reference: row[0]], row[1]) } 
+    fastas.map { row -> tuple([id: row[0]], row[1]) } 
         .set { ref_fastas }
+
 
 
     emit:
