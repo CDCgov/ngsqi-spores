@@ -23,7 +23,12 @@ workflow VALIDATE_FASTAS {
         }
         .set { fastas }
 
+    fastas.map { row -> tuple([reference: row[0]], row[1]) } 
+        .set { ref_fastas }
+
+
     emit:
-    fastas                                // channel: [ val(ID), [ fastas ] ]
+    fastas                                // channel: [ val(ID), [ fastas ], clade, var_id, chrom, pos, var_seq ]
+    ref_fastas                             // channel: [ val(ID), [ fastas ] ]
     versions = FASTA_CHECK.out.versions        // channel: [ versions.yml ]
 }
