@@ -31,15 +31,11 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
     IMPORT LOCAL MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-
-//
-// SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
-//
 include { INPUT_CHECK } from '../subworkflows/local/input_check'
 include { VALIDATE_FASTAS } from '../subworkflows/local/validate_fastas'
 include { REF_PREP } from '../subworkflows/local/ref_prep'
 include { QC } from '../subworkflows/local/qc'
-//include preprocessing
+include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 //include simulation
 //include variant detection
 //include variant annotation
@@ -50,11 +46,6 @@ include { QC } from '../subworkflows/local/qc'
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-
-//
-// MODULE: Installed directly from nf-core/modules
-//
-//include { FASTQC                      } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 
@@ -78,7 +69,6 @@ if (params.fastas) { ch_fastas = file(params.fastas) } else { exit 1, 'Reference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// Info required for completion email and summary
 def multiqc_report = []
 
 workflow SPORES {
@@ -112,7 +102,8 @@ workflow SPORES {
                                 Preprocessing
     ================================================================================
     */
-
+    PREPROCESSING(reads)
+    ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
 /*
     ================================================================================
                                 Reference Preparation
@@ -120,9 +111,6 @@ workflow SPORES {
     */
     REF_PREP ( ref_fastas )
     ch_versions = ch_versions.mix(REF_PREP.out.versions)
-    
-    ch_versions_unique = ch_versions.unique()
-    CUSTOM_DUMPSOFTWAREVERSIONS(ch_versions_unique.collectFile(name: 'collated_versions.yml'))
 
 /*
     ================================================================================
@@ -131,8 +119,13 @@ workflow SPORES {
     */
 //sim steps here
 
-
-
+/*
+    ================================================================================
+                                Versions Report
+    ================================================================================
+    */
+    ch_versions_unique = ch_versions.unique()
+    CUSTOM_DUMPSOFTWAREVERSIONS(ch_versions_unique.collectFile(name: 'collated_versions.yml'))
 /*
     ================================================================================
                                 MultiQC
