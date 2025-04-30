@@ -103,6 +103,7 @@ workflow SPORES {
     ================================================================================
     */
     PREPROCESSING(reads)
+    trimmed = PREPROCESSING.out.trimmed
     ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
 /*
     ================================================================================
