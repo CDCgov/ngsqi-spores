@@ -31,14 +31,11 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
     IMPORT LOCAL MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-
-//
-// SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
-//
 include { INPUT_CHECK } from '../subworkflows/local/input_check'
+include { VALIDATE_FASTAS } from '../subworkflows/local/validate_fastas'
 include { REF_PREP } from '../subworkflows/local/ref_prep'
 include { QC } from '../subworkflows/local/qc'
-//include preprocessing
+include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 //include simulation
 //include variant detection
 //include variant annotation
@@ -49,11 +46,6 @@ include { QC } from '../subworkflows/local/qc'
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-
-//
-// MODULE: Installed directly from nf-core/modules
-//
-//include { FASTQC                      } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 
@@ -64,12 +56,12 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoft
     */
 
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fasta ]
+def checkPathParamList = [ params.input, params.multiqc_config, params.fastas ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
-if (params.fasta) { fasta = file(params.fasta) } else { exit 1, 'Reference genome not specified!' }
+if (params.fastas) { ch_fastas = file(params.fastas) } else { exit 1, 'Reference genome not specified!' }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -77,51 +69,69 @@ if (params.fasta) { fasta = file(params.fasta) } else { exit 1, 'Reference genom
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// Info required for completion email and summary
 def multiqc_report = []
 
 workflow SPORES {
 
     ch_versions = Channel.empty()
 
-    //
-    // SUBWORKFLOW: Read in samplesheet, validate and stage input files
-    //
-    INPUT_CHECK (
-        file(params.input)
-    )
+/*
+    ================================================================================
+                                Samplesheet Validation
+    ================================================================================
+    */
+    INPUT_CHECK (file(params.input))
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
     reads = INPUT_CHECK.out.reads
-    
-    QC (
-        reads
-    )
+
+    VALIDATE_FASTAS (file(ch_fastas))
+    ch_versions = ch_versions.mix(VALIDATE_FASTAS.out.versions)
+    fastas = VALIDATE_FASTAS.out.fastas
+    ref_fastas = VALIDATE_FASTAS.out.ref_fastas
+
+/*
+    ================================================================================
+                                Quality Control
+    ================================================================================
+    */
+    QC (reads)
     ch_versions = ch_versions.mix(QC.out.versions)
 
-    // TODO: OPTIONAL, you can use nf-validation plugin to create an input channel from the samplesheet with Channel.fromSamplesheet("input")
-    // See the documentation https://nextflow-io.github.io/nf-validation/samplesheets/fromSamplesheet/
-    // ! There is currently no tooling to help you write a sample sheet schema
+/*
+    ================================================================================
+                                Preprocessing
+    ================================================================================
+    */
+    PREPROCESSING(reads)
+    trimmed = PREPROCESSING.out.trimmed
+    ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
+/*
+    ================================================================================
+                                Reference Preparation
+    ================================================================================
+    */
+    REF_PREP ( ref_fastas )
+    ch_versions = ch_versions.mix(REF_PREP.out.versions)
 
-    //
-    // MODULE: Run FastQC
-    //
-    //FASTQC (
-     //   INPUT_CHECK.out.reads
-   // )
-    //ch_versions = ch_versions.mix(FASTQC.out.versions.first())
+/*
+    ================================================================================
+                                Simulation
+    ================================================================================
+    */
+//sim steps here
+
+/*
+    ================================================================================
+                                Versions Report
+    ================================================================================
+    */
     ch_versions_unique = ch_versions.unique()
     CUSTOM_DUMPSOFTWAREVERSIONS(ch_versions_unique.collectFile(name: 'collated_versions.yml'))
-
-    //
-    // MODULE: REF_PREP
-    //
-    REF_PREP (
-        params.fasta
-    )
-     ch_versions = ch_versions.mix(REF_PREP.out.versions)
-    //
-    // MODULE: MultiQC
-    //
+/*
+    ================================================================================
+                                MultiQC
+    ================================================================================
+    */
     workflow_summary    = WorkflowSpores.paramsSummaryMultiqc(workflow, summary_params)
     ch_workflow_summary = Channel.value(workflow_summary)
 
@@ -141,6 +151,7 @@ workflow SPORES {
         ch_multiqc_logo.toList()
     )
     multiqc_report = MULTIQC.out.report.toList()
+
 }
 
 /*
