@@ -1,6 +1,6 @@
 /*
 ========================================================================================
-    QUALITY CONTROL & PREPROCESSING
+    QUALITY CONTROL
 ========================================================================================
 */
 
@@ -8,8 +8,6 @@ include { NANOCOMP } from '../../modules/nf-core/nanocomp/main'
 include { NANOPLOT } from '../../modules/nf-core/nanoplot/main'
 include { NANOQC } from '../../modules/local/nanoqc.nf'
 
-//include chopper
-//include hostile
 
 workflow QC {
     take:
@@ -33,10 +31,6 @@ workflow QC {
     //ch_multiqc_files = ch_multiqc_files.mix(NANOQC.out.stats)  
    
    emit:
-   NANOCOMP.out.report_html
-   NANOPLOT.out.png
-   NANOQC.out.html_1
-   NANOQC.out.html_2
    versions = ch_versions
    multiqc = ch_multiqc_files
 }

@@ -1,17 +1,14 @@
 process REF_FORMAT {
     input:
-    path(fasta)
+    tuple val(meta), path(fastas)
 
     output:
-    tuple val(meta), path("reference.fasta"), path("reference.copy.fasta"), emit: ref_tuple
+    tuple val(meta), path("${meta.id}.fasta"), path("${meta.id}.copy.fasta"), emit: ref_tuple
 
     script:
-    meta = ["id": 'reference']
-
     """
-    echo ${meta.id}
-    cp ${fasta} reference.fasta
-    cp reference.fasta reference.copy.fasta
-
+    echo "Processing reference: ${meta.id}"
+    cp ${fastas} ${meta.id}.fasta
+    cp ${meta.id}.fasta ${meta.id}.copy.fasta
     """
 }
