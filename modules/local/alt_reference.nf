@@ -1,4 +1,5 @@
 process ALTREFERENCE {
+    container 'quay.io/biocontainers/biopython:1.79' 
     tag "$accession"
     publishDir "${params.outdir}/references", mode: 'copy'
 
