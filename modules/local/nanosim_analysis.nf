@@ -4,7 +4,7 @@ process READANALYSIS {
    errorStrategy 'ignore'
 
    input:
-   tuple val(sample_id), path(fastq), val(reference_id), path(ref_file), path(alt_reference)
+   tuple val(sample_id), path(fastq), val(reference), path(ref_file), path(alt_reference)
     
 
    output:
