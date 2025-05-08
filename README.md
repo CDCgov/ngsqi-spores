@@ -1,11 +1,4 @@
-[![GitHub Actions CI Status](https://github.com/ngsqi/spores/workflows/nf-core%20CI/badge.svg)](https://github.com/ngsqi/spores/actions?query=workflow%3A%22nf-core+CI%22)
-[![GitHub Actions Linting Status](https://github.com/ngsqi/spores/workflows/nf-core%20linting/badge.svg)](https://github.com/ngsqi/spores/actions?query=workflow%3A%22nf-core+linting%22)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
-
-[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A523.04.0-23aa62.svg)](https://www.nextflow.io/)
-[![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
-[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
-[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
-[![Launch on Nextflow Tower](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Nextflow%20Tower-%234256e7)](https://tower.nf/launch?pipeline=https://github.com/ngsqi/spores)
+# :mushroom: SPORES: Simulation, Phylogeny Estimation, Read Optimization, Resistance Mutation Identification and Evaluation, and Sequence Annotation
 
 ### :mushroom: **Pipeline Under Development** :mushroom:
 
@@ -20,9 +13,9 @@
 
 The primary objectives of the SPORES workflow entail:
 
-*Generate long read in silico datasets based on genome sequences containing variants of interest and empirical long read error models
-*Perform preprocessing and error modeling on empirical long read datasets
-*Verify quality of empirical long reads and simulated in silico datasets 
+* Generate long read in silico datasets based on genome sequences containing variants of interest and empirical long read error models
+* Perform preprocessing and error modeling on empirical long read datasets
+* Verify quality of empirical long reads and simulated in silico datasets 
 
 <!-- TODO nf-core:
    Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
@@ -38,31 +31,58 @@ This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/l
 
 1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+3. Reference Preparation
+4. Simulation
+5. Versions Report
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
+### Set Up:
 
-First, prepare a samplesheet with your input data that looks as follows:
+First, prepare a samplesheet with your input empirical long read data that looks as follows:
 
 `samplesheet.csv`:
 
 ```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+sample,fastq
+Sample1, assets/data/B20592.fastq.gz
+Sample2, assets/data/B21256.fastq.gz
 ```
 
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
+Each row represents a long read fastq file.
 
--->
+You will need to also prepare a samplesheet for reference genomes and variant annotations of interest to be used in simulation. 
+
+`reference_samplesheet.csv`:
+```csv
+reference,clade,var_id,chrom,pos,var_seq
+GCA_016772135.1,1,fks1_hs1,CP060340.1,221636,TACTTGACTTTGTCCTTGAGAGATCCT
+GCF_003013715.1,2,fks1_hs1,NC_072812.1,2932580,AGGATCTCTCAAGgacaaagtcaagta
+```
+Each row corresponds to the following information:
+
+- `reference`: Reference genome accession from NCBI
+
+- `clade`: Clade number associated with Candid auris reference genome
+
+- `var_id`: Label for the given variant of interest
+
+- `chrom`: Chromosome corresponding with variant of interest location
+
+- `pos`: Numerical nucleotide position of variant of interest (use 0-based indexing)
+
+- `var_seq`: Desired variant sequence of interest to be substituted in the given position
+
+For instructions on creating an NCBI account and obtaining an API key, please visit the [National Library of Medicine Support Center](https://support.nlm.nih.gov/kbArticle/?pn=KA-05317).
 
 Now, you can run the pipeline using:
 
 <!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
+### Running SPORES:
+Now, you can run the pipeline using:
 
 ```bash
 nextflow run main.nf \
@@ -79,9 +99,14 @@ nextflow run main.nf \
 
 ## Credits
 
-ngsqi/spores was originally written by NGS QI In silico Team.
+SPORES was originally written by the Next Generation Sequencing (NGS) Quality Initiative (QI) In silico Team.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
+
+- CDC Mycotic Diseases Branch (MDB)
+- CDC Office of Advanced Molecular Detection (OAMD)
+- CDC Office of Laboratory Science and Safety (OLSS)
+- CDC Division of Laboratory Systems (DLS)
 
 <!-- TODO nf-core: If applicable, make list of people who have also contributed -->
 
