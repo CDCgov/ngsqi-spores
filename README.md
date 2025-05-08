@@ -7,9 +7,22 @@
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 [![Launch on Nextflow Tower](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Nextflow%20Tower-%234256e7)](https://tower.nf/launch?pipeline=https://github.com/ngsqi/spores)
 
+### :mushroom: **Pipeline Under Development** :mushroom:
+
+![Pipeline Status](https://img.shields.io/badge/status-in%20development-blue?style=flat&logo=mushroom)
+
 ## Introduction
 
-**ngsqi/spores** is a bioinformatics pipeline that ...
+**SPORES: Simulation, Phylogeny Estimation, Read Optimization, Resistance Mutation Identification and Evaluation, and Sequence Annotation** is a bioinformatics pipeline that performs quality control and preprocessing on empirical long sequencing reads, incorporates variants of interest into reference genomes, and generates long read in silico datasets using empirically derived error models and genomes containing variants of interest.
+
+[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A522.10.6-23aa62.svg?labelColor=000000)](https://www.nextflow.io/)
+[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
+
+The primary objectives of the SPORES workflow entail:
+
+*Generate long read in silico datasets based on genome sequences containing variants of interest and empirical long read error models
+*Perform preprocessing and error modeling on empirical long read datasets
+*Verify quality of empirical long reads and simulated in silico datasets 
 
 <!-- TODO nf-core:
    Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
@@ -20,6 +33,8 @@
 <!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
      workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
 <!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
+
+This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) and utilizes docker and singularity containers to modularize the workflow for optimal maintenance and reproducibility.
 
 1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
@@ -50,9 +65,11 @@ Now, you can run the pipeline using:
 <!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
 
 ```bash
-nextflow run ngsqi/spores \
-   -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
+nextflow run main.nf \
+   --input ont_read_samplesheet.csv \
+   --fastas reference_samplesheet.csv \
+   --ncbi_email <USER NCBI EMAIL> \
+   --ncbi_api_key <API KEY> \
    --outdir <OUTDIR>
 ```
 
