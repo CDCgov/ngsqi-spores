@@ -8,10 +8,16 @@ process ALTREFERENCE {
 
     output:
     tuple val(ID), path(ref_file), path("${ID}_${clade}_${var_id}_altreference.fna"), emit: alt_genomes
+    path "versions.yml", emit: versions
 
     script:
     """
     python ${altreference_script} -i ${ref_file} -c ${chrom} -p ${pos} -s ${var_seq} -o "${ID}_${clade}_${var_id}_altreference.fna"
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python_altreference: \$(echo \$(python --version 2>&1) | sed 's/^.*nanosim //; s/Using.*\$//')
+    END_VERSIONS
     """
 }
 
