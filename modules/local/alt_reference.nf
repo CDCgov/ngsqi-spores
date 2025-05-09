@@ -1,7 +1,6 @@
 process ALTREFERENCE {
     container 'quay.io/biocontainers/biopython:1.79' 
     tag "$ID"
-    publishDir "${params.outdir}/references", mode: 'copy'
 
     input:
     tuple val(ID), val(clade), val(var_id), val(chrom), val(pos), val(var_seq), path(ref_file)

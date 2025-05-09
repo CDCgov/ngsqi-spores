@@ -1,6 +1,5 @@
 process REFDOWNLOAD {
     container 'quay.io/biocontainers/biopython:1.79'
-    publishDir "${params.outdir}/ref_genomes", mode: 'copy'
     
     input:
     tuple val(reference), val(clade), val(var_id), val(chrom), val(pos), val(var_seq)
