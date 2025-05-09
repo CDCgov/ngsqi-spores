@@ -9,7 +9,8 @@ process REFDOWNLOAD {
     
     output:
     tuple val(reference), val(clade), val(var_id), val(chrom), val(pos), val(var_seq), path("${reference}_${clade}_${var_id}_genomic.fna"), emit: genome_data
-    path "${reference}_${clade}_${var_id}_genomic.fna" 
+    path "${reference}_${clade}_${var_id}_genomic.fna"
+    path "versions.yml", emit: versions
     
     script:
     """
@@ -19,5 +20,10 @@ process REFDOWNLOAD {
     
     # Run the download script
     python ${download_script} ${reference} ${clade} ${var_id}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python_altreference: \$(echo \$(python --version 2>&1) | sed 's/^.*nanosim //; s/Using.*\$//')
+    END_VERSIONS
     """
 }

@@ -29,6 +29,7 @@ The primary objectives of the SPORES workflow entail:
 
 This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) and utilizes docker and singularity containers to modularize the workflow for optimal maintenance and reproducibility.
 
+# Pipeline Summary
 1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 3. Reference Preparation
@@ -39,6 +40,13 @@ This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/l
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
+
+> To run the SPORES pipeline minimal test, you will need to add your user-specific credentials for the --ncbi_email and 
+> --ncbi_api_key parameters to the profile script located at conf/test.config. 
+
+> Once complete, you can run the minimal test
+> with the following command:
+> `nextflow run spores.nf -profile test,singularity --outdir <OUTDIR>`
 
 ### Set Up:
 

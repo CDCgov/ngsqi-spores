@@ -3,8 +3,6 @@
     SIMULATION
 ========================================================================================
 */
-
-//include { REFDOWNLOAD } from '../../modules/local/ref_download.nf'
 include { ALTREFERENCE } from '../../modules/local/alt_reference.nf'
 include { READANALYSIS } from '../../modules/local/nanosim_analysis.nf'
 include { NANOSIMSIMULATION } from '../../modules/local/nanosim_simulation.nf'
@@ -21,6 +19,8 @@ workflow SIMULATION {
         // Generate altered reference genomes
         ALTREFERENCE(ref_path, altreference_script)
         alt_genomes_ch = ALTREFERENCE.out.alt_genomes
+
+        ch_version = ch_versions.mix(ALTREFERENCE.out.versions)
         
         // Get first reference
         first_ref = alt_genomes_ch.first()
@@ -42,17 +42,27 @@ workflow SIMULATION {
         
         reads_model_prefix=READANALYSIS.out.model_dir
 
+        ch_version = ch_versions.mix(READANALYSIS.out.versions)
+
         sim_input = reads_model_prefix.combine(alt_genomes_ch)
 
 
         // Run simulation
         NANOSIMSIMULATION(sim_input)
-        
+        NANOSIMSIMULATION.out.nanosim_output
+            .map { sample_id, id, fastq_file -> 
+                def meta = [
+                    id: sample_id,
+                    ref_id: id,
+                ]
+                return [meta, fastq_file]
+            }
+            .set { meta_nanosim_output }
      
-        simulated_reads = NANOSIMSIMULATION.out.nanosim_output
+        simulated_reads = meta_nanosim_output
         ch_versions = ch_versions.mix(NANOSIMSIMULATION.out.versions)
 
     emit:
-        simulated_reads = simulated_reads
+        simulated_reads
         versions = ch_versions
 }
