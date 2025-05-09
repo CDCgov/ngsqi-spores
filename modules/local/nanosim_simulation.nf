@@ -1,7 +1,5 @@
 process NANOSIMSIMULATION {
    container "/scicomp/home-pure/xvp4/spores/third_party/nanosim.sif"
-   publishDir "${params.outdir}", mode: 'copy'
-   errorStrategy 'ignore'
    tag "sample: ${sample_id} ref: ${ID}"
 
    input:
