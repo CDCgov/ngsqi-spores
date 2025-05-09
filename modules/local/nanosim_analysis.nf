@@ -4,14 +4,14 @@ process READANALYSIS {
    errorStrategy 'ignore'
 
    input:
-   tuple val(sample_id), path(fastq), val(reference), path(ref_file), path(alt_reference)
+   tuple val(reference), path(ref_path), path(alt_reference), val(sample_id), path(fastq)
     
-
    output:
-   tuple val(sample_id), val(reference_id), path("${sample_id}_${reference_id}_model"), emit: model_dir
-   tuple val(sample_id), val(reference_id), val("${sample_id}_${reference_id}_model/${sample_id}_${reference_id}_error"), emit: model_prefix
-   path "${sample_id}_${reference_id}_model/**", emit: all_model_files
-   path "${sample_id}_${reference_id}*.log", emit: log_files
+   tuple val(sample_id), val(reference), path("${sample_id}_${reference}_model"), val("${sample_id}_${reference}_model/${sample_id}_${reference}_error"), emit: model_dir
+   //tuple val(sample_id), val(reference), val("${sample_id}_${reference}_model/${sample_id}_${reference}_error"), emit: model_prefix
+   path "${sample_id}_${reference}_model/**", emit: all_model_files
+   path "${sample_id}_${reference}*.log", emit: log_files
+   path "versions.yml", emit: versions
    
    script:
    """
@@ -24,11 +24,16 @@ process READANALYSIS {
       -i shortened.fastq \
       -rg "${alt_reference}" \
       --fastq \
-      -o "${sample_id}_${reference_id}_model/${sample_id}_${reference_id}_error"  \
-      > "${sample_id}_${reference_id}_outputaln.log" \
-      2> "${sample_id}_${reference_id}_erroraln.log"
+      -o "${sample_id}_${reference}_model/${sample_id}_${reference}_error"  \
+      > "${sample_id}_${reference}_outputaln.log" \
+      2> "${sample_id}_${reference}_erroraln.log"
    
    # Clean up 
    rm -f shortened.fastq
+
+   cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        nanosim: \$(echo \$(nanosim --version 2>&1) | sed 's/^.*nanosim //; s/Using.*\$//')
+    END_VERSIONS
    """
 }
