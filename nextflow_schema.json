@@ -10,7 +10,7 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "outdir"],
+            "required": ["input", "outdir", "ncbi_email", "ncbi_api_key"],
             "properties": {
                 "input": {
                     "type": "string",
@@ -44,13 +44,15 @@
                     "type": "string",
                     "format": "file-path",
                     "description": "Python script for downloading reference genomes from NCBI",
-                    "fa_icon": "fas fa-folder-open"
+                    "fa_icon": "fas fa-folder-open",
+                    "default": "/scicomp/home-pure/xvp4/spores/scripts/download_genome.py"
                 },
                 "altreference_script": {
                     "type": "string",
                     "format": "file-path",
                     "description": "Python script for generating reference genomes with variants of interest",
-                    "fa_icon": "fas fa-folder-open"
+                    "fa_icon": "fas fa-folder-open",
+                    "default": "/scicomp/home-pure/xvp4/spores/scripts/edit_reference.py"
                 },
                 "ncbi_email": {
                     "type": "string",
@@ -228,7 +230,8 @@
                 "multiqc_methods_description": {
                     "type": "string",
                     "description": "Custom MultiQC yaml file containing HTML including a methods description.",
-                    "fa_icon": "fas fa-cog"
+                    "fa_icon": "fas fa-cog",
+                    "hidden": true
                 },
                 "validate_params": {
                     "type": "boolean",
@@ -279,6 +282,9 @@
         "fastas": {
             "type": "string",
             "fa_icon": "fas fa-file-csv"
+        },
+        "postsim": {
+            "type": "boolean"
         }
     },
     "required": ["fastas"]

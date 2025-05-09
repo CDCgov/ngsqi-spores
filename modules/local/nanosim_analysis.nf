@@ -6,7 +6,6 @@ process READANALYSIS {
     
    output:
    tuple val(sample_id), val(reference), path("${sample_id}_${reference}_model"), val("${sample_id}_${reference}_model/${sample_id}_${reference}_error"), emit: model_dir
-   //tuple val(sample_id), val(reference), val("${sample_id}_${reference}_model/${sample_id}_${reference}_error"), emit: model_prefix
    path "${sample_id}_${reference}_model/**", emit: all_model_files
    path "${sample_id}_${reference}*.log", emit: log_files
    path "versions.yml", emit: versions
@@ -31,7 +30,7 @@ process READANALYSIS {
 
    cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        nanosim: \$(echo \$(nanosim --version 2>&1) | sed 's/^.*nanosim //; s/Using.*\$//')
+        nanosim_readanalysis: \$(echo \$(read_analysis.py -v 2>&1) | sed 's/^.*nanosim //; s/Using.*\$//')
     END_VERSIONS
    """
 }
