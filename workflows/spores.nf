@@ -36,7 +36,7 @@ include { VALIDATE_FASTAS } from '../subworkflows/local/validate_fastas'
 include { REF_PREP } from '../subworkflows/local/ref_prep'
 include { QC } from '../subworkflows/local/qc'
 include { PREPROCESSING } from '../subworkflows/local/preprocessing'
-//include simulation
+include { SIMULATION } from '../subworkflows/local/simulation'
 //include variant detection
 //include variant annotation
 //include phylogeny estimation
@@ -56,7 +56,7 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoft
     */
 
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fastas ]
+def checkPathParamList = [ params.input, params.multiqc_config, params.fastas, params.download_script, params.altreference_script ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
@@ -84,9 +84,9 @@ workflow SPORES {
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
     reads = INPUT_CHECK.out.reads
 
-    VALIDATE_FASTAS (file(ch_fastas))
+    VALIDATE_FASTAS (file(ch_fastas), params.download_script, params.ncbi_email, params.ncbi_api_key)
     ch_versions = ch_versions.mix(VALIDATE_FASTAS.out.versions)
-    fastas = VALIDATE_FASTAS.out.fastas
+    fastas = VALIDATE_FASTAS.out.ref_path.view()
     ref_fastas = VALIDATE_FASTAS.out.ref_fastas
 
 /*
@@ -103,7 +103,7 @@ workflow SPORES {
     ================================================================================
     */
     PREPROCESSING(reads)
-    trimmed = PREPROCESSING.out.trimmed
+    trimmed = PREPROCESSING.out.trimmed.view()
     ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
 /*
     ================================================================================
@@ -118,7 +118,8 @@ workflow SPORES {
                                 Simulation
     ================================================================================
     */
-//sim steps here
+    SIMULATION(fastas, trimmed,  params.altreference_script)
+    ch_versions = ch_versions.mix(SIMULATION.out.versions)
 
 /*
     ================================================================================

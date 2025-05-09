@@ -10,9 +10,9 @@ logger = logging.getLogger()
 class RowChecker:
     VALID_FORMATS = (".fa", ".fasta", ".fna")
 
-    def __init__(self, fasta_col="reference", path_col="path", clade_col="clade", var_col="var_id", chrom_col="chrom", pos_col="pos", seq_col="var_seq"):
+    def __init__(self, fasta_col="reference", clade_col="clade", var_col="var_id", chrom_col="chrom", pos_col="pos", seq_col="var_seq"):
         self._fasta_col = fasta_col
-        self._path_col = path_col
+        #self._path_col = path_col
         self._clade_col = clade_col
         self._var_col = var_col
         self._chrom_col = chrom_col
@@ -23,28 +23,28 @@ class RowChecker:
 
     def validate_and_transform(self, row):
         try:
-            self._validate_fasta(row)
+            #self._validate_fasta(row)
             self._validate_chrom(row)
             self._validate_pos(row)
             self._validate_seq(row)
-            self._seen.add(row[self._path_col])
+            #self._seen.add(row[self._path_col])
             self.modified.append(row) 
         except AssertionError as error:
             logger.error(f"Validation error: {error} in row {row}")
 
-    def _validate_fasta(self, row):
+    #def _validate_fasta(self, row):
         # Retrieve the path to the FASTA file from the correct column
-        fasta_path = row.get(self._path_col, "").strip()
+        #fasta_path = row.get(self._path_col, "").strip()
 
         # Debugging: Print the path being checked
-        print(f"Checking FASTA file path: '{fasta_path}'")
+        #print(f"Checking FASTA file path: '{fasta_path}'")
 
-        if not fasta_path:
-            raise AssertionError("FASTA file path is required.")
-        if not Path(fasta_path).exists():
-            raise AssertionError(f"FASTA file does not exist: {fasta_path}")
-        if not any(fasta_path.endswith(ext) for ext in self.VALID_FORMATS):
-            raise AssertionError(f"Unrecognized FASTA file extension: {fasta_path}. Allowed: {', '.join(self.VALID_FORMATS)}")
+        #if not fasta_path:
+        #    raise AssertionError("FASTA file path is required.")
+        #if not Path(fasta_path).exists():
+        #    raise AssertionError(f"FASTA file does not exist: {fasta_path}")
+        #if not any(fasta_path.endswith(ext) for ext in self.VALID_FORMATS):
+        #    raise AssertionError(f"Unrecognized FASTA file extension: {fasta_path}. Allowed: {', '.join(self.VALID_FORMATS)}")
 
     def _validate_chrom(self, row):
         chrom = row.get(self._chrom_col, "").strip()
@@ -64,7 +64,7 @@ class RowChecker:
             raise AssertionError("Sequence contains invalid characters. Allowed: A, C, G, T.")
 
 def check_fasta_samplesheet(file_in, file_out):
-    required_columns = {"reference", "path", "clade", "var_id", "chrom", "pos", "var_seq"}
+    required_columns = {"reference", "clade", "var_id", "chrom", "pos", "var_seq"}
     with file_in.open(newline="") as in_handle:
         reader = csv.DictReader(in_handle)
         if not required_columns.issubset(reader.fieldnames):

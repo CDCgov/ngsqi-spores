@@ -3,6 +3,7 @@
     REFERENCE PREPARATION
 ========================================================================================
 */
+//include { REFDOWNLOAD } from '../../modules/local/ref_download.nf'
 include { REF_FORMAT } from '../../modules/local/ref_format.nf'
 include { NUCMER } from '../../modules/nf-core/nucmer/main'
 include { COORDSTOBED } from '../../modules/local/coordstobed.nf'
@@ -16,7 +17,6 @@ include { SAMTOOLS_FAIDX as SAMTOOLS} from '../../modules/nf-core/samtools/faidx
 workflow REF_PREP {
     take:
     ref_fastas
-
 
     main:
     ch_versions = Channel.empty()
