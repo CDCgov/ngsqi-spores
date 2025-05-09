@@ -39,6 +39,30 @@
                     "type": "string",
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
+                },
+                "download_script": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "Python script for downloading reference genomes from NCBI",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "altreference_script": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "Python script for generating reference genomes with variants of interest",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "ncbi_email": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "NCBI email for downloads",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "ncbi_api_key": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "NCBI API key for downloads",
+                    "fa_icon": "fas fa-folder-open"
                 }
             }
         },

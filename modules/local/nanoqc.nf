@@ -3,7 +3,7 @@ process NANOQC {
     label 'process_low'
 
     input:
-    tuple val(meta), path(ontfile)
+    tuple val(meta), path(fastq)
 
     output:
     tuple val(meta), path("*.html")                , emit: html
@@ -15,13 +15,13 @@ process NANOQC {
 
     script:
     def args = task.ext.args ?: ''
-    def input_file = ("$ontfile".endsWith(".fastq.gz") || "$ontfile".endsWith(".fq.gz")) ? "${ontfile}" :
-        ("$ontfile".endsWith(".txt")) ? "--summary ${ontfile}" : ''
+    def input_file = ("$fastq".endsWith(".fastq.gz") || "$fastq".endsWith(".fq.gz")) ? "${fastq}" :
+        ("$fastq".endsWith(".txt")) ? "--summary ${fastq}" : ''
     """
     nanoQC \\
         $args \\
         -o . \\
-        ${ontfile}
+        ${fastq}
 
 cat <<-END_VERSIONS > versions.yml
     "${task.process}":
