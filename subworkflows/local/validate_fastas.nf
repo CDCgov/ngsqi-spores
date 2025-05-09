@@ -1,13 +1,17 @@
 // Check input samplesheet and get read channels
-
 include { FASTA_CHECK } from '../../modules/local/fasta_check'
+include { REFDOWNLOAD } from '../../modules/local/ref_download.nf'
+
 
 workflow VALIDATE_FASTAS {
     take:
     fasta_samplesheet // file: /path/to/fasta_samplesheet.csv
+    download_script
+    ncbi_email
+    ncbi_api_key
 
     main:
-    FASTA_CHECK ( fasta_samplesheet )
+        FASTA_CHECK ( fasta_samplesheet )
         .csv
         .splitCsv(header: true, sep: ',')
         .map { row -> 
@@ -22,13 +26,15 @@ workflow VALIDATE_FASTAS {
         }
         .set { fastas }
 
-    fastas.map { row -> tuple([id: row[0]], row[1]) } 
+    REFDOWNLOAD(fastas, download_script, ncbi_email, ncbi_api_key)
+    ref_path=REFDOWNLOAD.out.genome_data
+
+    ref_path.map { row -> tuple([id: row[0]], row[6]) } 
         .set { ref_fastas }
 
 
-
     emit:
-    fastas                                // channel: [ val(ID), clade, var_id, chrom, pos, var_seq ]
+    ref_path                                // channel: [ val(ID), clade, var_id, chrom, pos, var_seq, [fastas] ]
     ref_fastas                             // channel: [ val(ID), [ fastas ] ]
     versions = FASTA_CHECK.out.versions        // channel: [ versions.yml ]
 }
