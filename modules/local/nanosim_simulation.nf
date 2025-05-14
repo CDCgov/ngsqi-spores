@@ -1,5 +1,5 @@
 process NANOSIMSIMULATION {
-    container "/scicomp/home-pure/xvp4/spores/third_party/nanosim.sif"
+    container "${projectDir}/third_party/nanosim.sif"
     tag "sample: ${sample_id} ref: ${ID}"
 
     cpus 8

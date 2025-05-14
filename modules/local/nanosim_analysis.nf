@@ -1,5 +1,5 @@
 process READANALYSIS {
-   container "/scicomp/home-pure/xvp4/spores/third_party/nanosim.sif"
+   container "${projectDir}/third_party/nanosim.sif"
 
    input:
    tuple val(reference), path(ref_path), path(alt_reference), val(sample_id), path(fastq)
