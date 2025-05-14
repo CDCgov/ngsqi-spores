@@ -29,11 +29,11 @@ workflow VALIDATE_FASTAS {
         .set { fastas }
 
 
-    ch_version = ch_versions.mix(FASTA_CHECK.out.versions)
+    ch_versions = ch_versions.mix(FASTA_CHECK.out.versions)
 
     REFDOWNLOAD(fastas, download_script, ncbi_email, ncbi_api_key)
     ref_path=REFDOWNLOAD.out.genome_data
-    ch_version = ch_versions.mix(REFDOWNLOAD.out.versions)
+    ch_versions = ch_versions.mix(REFDOWNLOAD.out.versions)
 
     ref_path.map { row -> tuple([id: row[0]], row[6]) } 
         .set { ref_fastas }
@@ -42,5 +42,5 @@ workflow VALIDATE_FASTAS {
     emit:
     ref_path                                // channel: [ val(ID), clade, var_id, chrom, pos, var_seq, [fastas] ]
     ref_fastas                             // channel: [ val(ID), [ fastas ] ]
-    versions = ch_version        // channel: [ versions.yml ]
+    versions = ch_versions        // channel: [ versions.yml ]
 }
