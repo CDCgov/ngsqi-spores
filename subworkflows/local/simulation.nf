@@ -20,7 +20,7 @@ workflow SIMULATION {
         ALTREFERENCE(ref_path, altreference_script)
         alt_genomes_ch = ALTREFERENCE.out.alt_genomes
 
-        ch_version = ch_versions.mix(ALTREFERENCE.out.versions)
+        ch_versions = ch_versions.mix(ALTREFERENCE.out.versions)
         
         // Get first reference
         first_ref = alt_genomes_ch.first()
@@ -42,24 +42,25 @@ workflow SIMULATION {
         
         reads_model_prefix=READANALYSIS.out.model_dir
 
-        ch_version = ch_versions.mix(READANALYSIS.out.versions)
+        ch_versions = ch_versions.mix(READANALYSIS.out.versions)
 
         sim_input = reads_model_prefix.combine(alt_genomes_ch)
 
 
         // Run simulation
         NANOSIMSIMULATION(sim_input)
-        NANOSIMSIMULATION.out.nanosim_output
-            .map { sample_id, id, fastq_file -> 
-                def meta = [
-                    id: sample_id,
-                    ref_id: id,
-                ]
-                return [meta, fastq_file]
+        simulated_reads = NANOSIMSIMULATION.out.nanosim_output
+            .map { sample_id, ID, fastq_file ->
+                def meta = [id: "${sample_id}_${ID}"]
+                return [meta, [fastq_file]]
             }
-            .set { meta_nanosim_output }
-     
-        simulated_reads = meta_nanosim_output
+
+            .groupTuple(by: 0) 
+            .map { meta, file_lists ->
+                def flattened_files = file_lists.flatten()
+                return [meta, flattened_files]
+            }
+        
         ch_versions = ch_versions.mix(NANOSIMSIMULATION.out.versions)
 
     emit:
