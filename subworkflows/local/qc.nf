@@ -27,7 +27,7 @@ workflow QC {
     ch_multiqc_files = ch_multiqc_files.mix(NANOPLOT.out.txt)
     
     NANOQC(reads)
-    //ch_versions = ch_versions.mix(NANOQC.out.versions)
+    ch_versions = ch_versions.mix(NANOQC.out.versions)
     //ch_multiqc_files = ch_multiqc_files.mix(NANOQC.out.stats)  
    
    emit:
