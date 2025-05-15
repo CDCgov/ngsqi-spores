@@ -5,7 +5,7 @@ process NANOSIMSIMULATION {
     cpus 8
 
     input:
-    tuple val(sample_id), val(reference), path(model_dir), val(model_prefix), val(ID), path(ref_file), path(alt_ref)
+    tuple val(sample_id), val(reference), path(model_dir), val(model_prefix), val(ID), path(ref_file), path(alt_ref), val(number_of_reads)
 
     output:
     tuple val(sample_id), val(ID), path("${sample_id}_${ID}_aligned_reads.fastq.gz"), emit: nanosim_output
@@ -18,7 +18,7 @@ process NANOSIMSIMULATION {
     simulator.py genome \\
       -rg "${alt_ref}" \\
       -c "${model_prefix}" \\
-      -n 1000 \\
+      -n "${number_of_reads}" \\
       -t 9 \\
       --fastq \\
       -o "${sample_id}_${ID}_nanosim" \\
