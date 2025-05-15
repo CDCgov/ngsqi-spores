@@ -121,7 +121,7 @@ workflow SPORES {
                                 Simulation
     ================================================================================
     */
-    SIMULATION(fastas, trimmed,  params.altreference_script)
+    SIMULATION(fastas, trimmed,  params.altreference_script, QC.out.read_counts)
     ch_versions = ch_versions.mix(SIMULATION.out.versions)
 /*
     ================================================================================
