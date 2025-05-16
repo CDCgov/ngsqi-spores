@@ -128,10 +128,8 @@ workflow SPORES {
                                 PostSim
     ================================================================================
     */
-    if (params.postsim) {
     QCSIM (SIMULATION.out.simulated_reads)
     ch_versions = ch_versions.mix(QCSIM.out.versions)
-    }
 /*
     ================================================================================
                                 Versions Report
