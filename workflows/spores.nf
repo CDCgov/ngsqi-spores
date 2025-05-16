@@ -38,16 +38,13 @@ include { QC } from '../subworkflows/local/qc'
 include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 include { SIMULATION } from '../subworkflows/local/simulation'
 include { QCSIM } from '../subworkflows/local/qcsim'
-//include variant detection
-//include variant annotation
-//include phylogeny estimation
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-//include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 
 /*
@@ -72,7 +69,6 @@ if (params.ncbi_api_key) { ncbi_api_key = params.ncbi_api_key } else { exit 1, '
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//def multiqc_report = []
 
 workflow SPORES {
 
@@ -139,30 +135,6 @@ workflow SPORES {
     */
     ch_versions_unique = ch_versions.unique()
     CUSTOM_DUMPSOFTWAREVERSIONS(ch_versions_unique.collectFile(name: 'collated_versions.yml'))
-/*
-    ================================================================================
-                                MultiQC
-    ================================================================================
-    */
-    //workflow_summary    = WorkflowSpores.paramsSummaryMultiqc(workflow, summary_params)
-    //ch_workflow_summary = Channel.value(workflow_summary)
-
-    //methods_description    = WorkflowSpores.methodsDescriptionText(workflow, ch_multiqc_custom_methods_description, params)
-    //ch_methods_description = Channel.value(methods_description)
-
-    //ch_multiqc_files = Channel.empty()
-    //ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    //ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
-    //ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
-    //ch_multiqc_files = ch_multiqc_files.mix(QC.out.multiqc.collect{it[1]}.ifEmpty([]))
-
-    //MULTIQC (
-    //    ch_multiqc_files.collect(),
-    //    ch_multiqc_config.toList(),
-    //    ch_multiqc_custom_config.toList(),
-    //    ch_multiqc_logo.toList()
-    //)
-    //multiqc_report = MULTIQC.out.report.toList()
 
 }
 
