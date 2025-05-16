@@ -1,5 +1,5 @@
 process READANALYSIS {
-   container "/scicomp/home-pure/xvp4/spores/third_party/nanosim.sif"
+   container "${projectDir}/third_party/nanosim.sif"
 
    input:
    tuple val(reference), path(ref_path), path(alt_reference), val(sample_id), path(fastq)
@@ -29,8 +29,9 @@ process READANALYSIS {
    rm -f shortened.fastq
 
    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        nanosim_readanalysis: \$(echo \$(read_analysis.py -v 2>&1) | sed 's/^.*nanosim //; s/Using.*\$//')
-    END_VERSIONS
+   "${task.process}":
+        nanosim_readanalysis: NanoSim 3.2.2
+        
+   END_VERSIONS
    """
 }
