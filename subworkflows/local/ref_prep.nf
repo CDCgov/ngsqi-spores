@@ -20,7 +20,6 @@ workflow REF_PREP {
 
     main:
     ch_versions = Channel.empty()
-    ch_multiqc_files  = Channel.empty()
 
     REF_FORMAT(ref_fastas)
     ref = REF_FORMAT.out.ref_tuple
