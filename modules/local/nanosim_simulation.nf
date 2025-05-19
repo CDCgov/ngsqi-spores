@@ -1,5 +1,5 @@
 process NANOSIMSIMULATION {
-    container "/scicomp/home-pure/xvp4/spores/third_party/nanosim.sif"
+    container "${projectDir}/third_party/nanosim.sif"
     tag "sample: ${sample_id} ref: ${ID}"
 
     cpus 8
@@ -41,7 +41,7 @@ process NANOSIMSIMULATION {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        nanosim_simulation: \$(echo \$(read_analysis.py -v 2>&1) | sed 's/^.*nanosim //; s/Using.*\$//')
+        nanosim_simulation: NanoSim 3.2.2
     END_VERSIONS
     """
 }

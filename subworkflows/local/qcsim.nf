@@ -19,17 +19,13 @@ workflow QCSIM {
 
     NANOCOMPSIM(simulated_reads)
     ch_versions = ch_versions.mix(NANOCOMPSIM.out.versions)
-    //ch_multiqc_files = ch_multiqc_files.mix(NANOCOMP.out.stats_txt)
     
     NANOPLOTSIM(simulated_reads)
     ch_versions = ch_versions.mix(NANOPLOTSIM.out.versions)
-    //ch_multiqc_files = ch_multiqc_files.mix(NANOPLOT.out.txt)
     
     NANOQCSIM(simulated_reads)
     ch_versions = ch_versions.mix(NANOQCSIM.out.versions)
-    //ch_multiqc_files = ch_multiqc_files.mix(NANOQC.out.stats)  
    
    emit:
    versions = ch_versions
-   //multiqc = ch_multiqc_files
 } 
