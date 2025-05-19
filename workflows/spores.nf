@@ -36,6 +36,8 @@ include { VALIDATE_FASTAS } from '../subworkflows/local/validate_fastas'
 include { REF_PREP } from '../subworkflows/local/ref_prep'
 include { QC } from '../subworkflows/local/qc'
 include { PREPROCESSING } from '../subworkflows/local/preprocessing'
+include { QC as QC_CLEAN } from '../subworkflows/local/qc'
+include { EXTRACT_READ_COUNT } from '../modules/local/extract_read_count.nf'
 include { SIMULATION } from '../subworkflows/local/simulation'
 include { QCSIM } from '../subworkflows/local/qcsim'
 
@@ -90,10 +92,10 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                Quality Control
+                                Quality Control - Raw
     ================================================================================
     */
-    QC (reads)
+    QC(reads)
     ch_versions = ch_versions.mix(QC.out.versions)
 
 /*
@@ -102,8 +104,25 @@ workflow SPORES {
     ================================================================================
     */
     PREPROCESSING(reads)
-    trimmed = PREPROCESSING.out.trimmed.view()
+    trimmed = PREPROCESSING.out.trimmed
     ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
+
+/*
+    ================================================================================
+                                Quality Control - Trimmed
+    ================================================================================
+    */
+    QC_CLEAN(trimmed)
+    nanostats = QC_CLEAN.out.nanostats
+    ch_versions = ch_versions.mix(QC_CLEAN.out.versions)
+
+/*
+    ================================================================================
+                                EXTRACT READ COUNT
+    ================================================================================
+    */
+    EXTRACT_READ_COUNT(nanostats)
+    read_counts = EXTRACT_READ_COUNT.out.read_counts
 /*
     ================================================================================
                                 Reference Preparation
@@ -117,14 +136,14 @@ workflow SPORES {
                                 Simulation
     ================================================================================
     */
-    SIMULATION(fastas, trimmed,  params.altreference_script, QC.out.read_counts)
+    SIMULATION(fastas, trimmed,  params.altreference_script, read_counts)
     ch_versions = ch_versions.mix(SIMULATION.out.versions)
 /*
     ================================================================================
                                 PostSim
     ================================================================================
     */
-    QCSIM (SIMULATION.out.simulated_reads)
+    QCSIM(SIMULATION.out.simulated_reads)
     ch_versions = ch_versions.mix(QCSIM.out.versions)
 /*
     ================================================================================
