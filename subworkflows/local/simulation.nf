@@ -12,6 +12,7 @@ workflow SIMULATION {
         ref_path
         trimmed
         altreference_script
+        read_counts
 
     main:
     ch_versions = Channel.empty()
@@ -48,6 +49,32 @@ workflow SIMULATION {
 
     // Run simulation
     NANOSIMSIMULATION(sim_input)
+    simulated_reads = NANOSIMSIMULATION.out.nanosim_output
+    .map { sample_id, ID, fastq_file ->
+        def meta = [id: "${sample_id}_${ID}"]
+        return [meta, [fastq_file]]
+    }
+
+    .groupTuple(by: 0) 
+    .map { meta, file_lists ->
+        def flattened_files = file_lists.flatten()
+        return [meta, flattened_files]
+    }
+        
+    reads_model_prefix=READANALYSIS.out.model_dir
+
+    ch_versions = ch_versions.mix(READANALYSIS.out.versions)
+
+    sim_input = reads_model_prefix.combine(alt_genomes_ch)
+
+    sim_input_reads= sim_input.join(read_counts)
+        .map { sample_id, ref, model_dir, model_prefix, ID, ref_file, alt_ref, reads ->
+            [sample_id, ref, model_dir, model_prefix, ID, ref_file, alt_ref, reads]
+        }
+        .view()
+
+    // Run simulation
+    NANOSIMSIMULATION(sim_input_reads)
     simulated_reads = NANOSIMSIMULATION.out.nanosim_output
         .map { sample_id, ID, fastq_file ->
             def meta = [id: "${sample_id}_${ID}"]
