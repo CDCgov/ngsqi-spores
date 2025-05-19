@@ -16,26 +16,22 @@ workflow QC {
 
     main:
     ch_versions = Channel.empty()
-    ch_multiqc_files = Channel.empty()
 
     NANOCOMP(reads)
     ch_versions = ch_versions.mix(NANOCOMP.out.versions)
-    //ch_multiqc_files = ch_multiqc_files.mix(NANOCOMP.out.stats_txt)
     
     NANOPLOT(reads)
     ch_versions = ch_versions.mix(NANOPLOT.out.versions)
-    //ch_multiqc_files = ch_multiqc_files.mix(NANOPLOT.out.txt)
     
     // Extract read counts from NanoPlot's NanoStats.txt output
     EXTRACT_READ_COUNT(NANOPLOT.out.txt)
     read_counts = EXTRACT_READ_COUNT.out.read_counts.view()
     
     NANOQC(reads)
-    ch_versions = ch_versions.mix(NANOQC.out.versions)
-    //ch_multiqc_files = ch_multiqc_files.mix(NANOQC.out.stats)  
+    ch_versions = ch_versions.mix(NANOQC.out.versions) 
    
     emit:
     versions = ch_versions
-    multiqc = ch_multiqc_files
     read_counts
+
 }
