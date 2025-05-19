@@ -33,5 +33,4 @@ workflow QC {
     emit:
     versions = ch_versions
     read_counts
-
 }
