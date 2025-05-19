@@ -30,8 +30,9 @@ The primary objectives of the SPORES workflow entail:
 This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) and utilizes docker and singularity containers to modularize the workflow for optimal maintenance and reproducibility.
 
 # Pipeline Summary
-1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+1. Input long read sequencing data (.fastq) and reference genomes (.fna)
+2. Perform quality control on sequencing reads using NanoPack tools (`NanoComp`,`NanoPlot`,`NanoQC`)
+
 3. Reference Preparation
 4. Simulation
 5. Versions Report
