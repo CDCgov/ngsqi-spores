@@ -9,10 +9,10 @@ include { NANOSIMSIMULATION } from '../../modules/local/nanosim_simulation.nf'
 
 workflow SIMULATION {
     take:
-        ref_path
-        trimmed
-        altreference_script
-        read_counts
+    ref_path
+    trimmed
+    altreference_script
+    read_counts
 
     main:
     ch_versions = Channel.empty()
