@@ -282,9 +282,6 @@
         "fastas": {
             "type": "string",
             "fa_icon": "fas fa-file-csv"
-        },
-        "postsim": {
-            "type": "boolean"
         }
     },
     "required": ["fastas"]
