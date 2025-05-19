@@ -39,37 +39,26 @@ workflow SIMULATION {
         
     // Run read analysis
     READANALYSIS(readanalysis_ch)
-        
-    reads_model_prefix=READANALYSIS.out.model_dir
-
+    reads_model_prefix = READANALYSIS.out.model_dir
     ch_versions = ch_versions.mix(READANALYSIS.out.versions)
 
-    sim_input = reads_model_prefix.combine(alt_genomes_ch)
-
-
-    // Run simulation
-    NANOSIMSIMULATION(sim_input)
-    simulated_reads = NANOSIMSIMULATION.out.nanosim_output
-    .map { sample_id, ID, fastq_file ->
-        def meta = [id: "${sample_id}_${ID}"]
-        return [meta, [fastq_file]]
+    // Get read counts by sample ID
+    read_counts_by_sample = read_counts.map { sample_id, reads -> 
+        [sample_id, reads] 
     }
-
-    .groupTuple(by: 0) 
-    .map { meta, file_lists ->
-        def flattened_files = file_lists.flatten()
-        return [meta, flattened_files]
-    }
-        
-    reads_model_prefix=READANALYSIS.out.model_dir
-
-    ch_versions = ch_versions.mix(READANALYSIS.out.versions)
-
-    sim_input = reads_model_prefix.combine(alt_genomes_ch)
-
-    sim_input_reads= sim_input.join(read_counts)
-        .map { sample_id, ref, model_dir, model_prefix, ID, ref_file, alt_ref, reads ->
-            [sample_id, ref, model_dir, model_prefix, ID, ref_file, alt_ref, reads]
+    
+    // First join each model with its sample's read count
+    model_with_reads = reads_model_prefix
+        .map { sample_id, ref_id, model_dir, model_prefix -> 
+            [sample_id, ref_id, model_dir, model_prefix]
+        }
+        .join(read_counts_by_sample)
+    
+    // Then combine with all references 
+    sim_input_reads = model_with_reads
+        .combine(alt_genomes_ch)
+        .map { sample_id, ref_id_model, model_dir, model_prefix, reads, alt_ref_id, ref_file, alt_ref ->
+            [sample_id, ref_id_model, model_dir, model_prefix, alt_ref_id, ref_file, alt_ref, reads]
         }
         .view()
 
@@ -80,7 +69,6 @@ workflow SIMULATION {
             def meta = [id: "${sample_id}_${ID}"]
             return [meta, [fastq_file]]
         }
-
         .groupTuple(by: 0) 
         .map { meta, file_lists ->
             def flattened_files = file_lists.flatten()
