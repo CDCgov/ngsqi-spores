@@ -31,7 +31,6 @@ process READANALYSIS {
    cat <<-END_VERSIONS > versions.yml
    "${task.process}":
         nanosim_readanalysis: NanoSim 3.2.2
-        
    END_VERSIONS
    """
 }
