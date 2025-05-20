@@ -60,7 +60,6 @@ workflow SIMULATION {
         .map { sample_id, ref_id_model, model_dir, model_prefix, reads, alt_ref_id, ref_file, alt_ref ->
             [sample_id, ref_id_model, model_dir, model_prefix, alt_ref_id, ref_file, alt_ref, reads]
         }
-        .view()
 
     // Run simulation
     NANOSIMSIMULATION(sim_input_reads)
