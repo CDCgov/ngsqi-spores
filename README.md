@@ -32,10 +32,10 @@ This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/l
 # Pipeline Summary
 1. Input long read sequencing data (.fastq) and reference genomes (.fna)
 2. Perform quality control on sequencing reads using NanoPack tools (`NanoComp`,`NanoPlot`,`NanoQC`)
-
-3. Reference Preparation
-4. Simulation
-5. Versions Report
+3. Preprocess empirical long read data by filtering reads based on quality and length (`chopper`)
+4. Prepare reference genomes for BWA alignment and variant calling (`NUCmer`,`bedtools`,`BWA`,`SAMtools`)
+5. Modify reference genomes to contain variants of interest and simulate long sequencing reads (`SeqIO`,`NanoSim`)
+6. Generate versions report
 
 ## Usage
 
