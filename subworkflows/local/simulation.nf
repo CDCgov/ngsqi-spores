@@ -35,7 +35,7 @@ workflow SIMULATION {
         .combine(first_ref)
         .map { sample_id, fastq, ref_id, ref_path, alt_ref_path ->
             [ref_id, ref_path, alt_ref_path, sample_id, fastq]
-        }
+    }
         
     // Run read analysis
     READANALYSIS(readanalysis_ch)
@@ -73,7 +73,7 @@ workflow SIMULATION {
         .map { meta, file_lists ->
             def flattened_files = file_lists.flatten()
             return [meta, flattened_files]
-        }
+    }
         
     ch_versions = ch_versions.mix(NANOSIMSIMULATION.out.versions)
 
