@@ -99,7 +99,8 @@ nextflow run main.nf \
    --fastas reference_samplesheet.csv \
    --ncbi_email <USER NCBI EMAIL> \
    --ncbi_api_key <API KEY> \
-   --outdir <OUTDIR>
+   --outdir <OUTDIR> \
+   -profile singularity,cdc
 ```
 
 > [!WARNING]
