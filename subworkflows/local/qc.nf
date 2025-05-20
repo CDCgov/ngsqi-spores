@@ -22,15 +22,13 @@ workflow QC {
     
     NANOPLOT(reads)
     ch_versions = ch_versions.mix(NANOPLOT.out.versions)
-    
-    // Extract read counts from NanoPlot's NanoStats.txt output
-    EXTRACT_READ_COUNT(NANOPLOT.out.txt)
-    read_counts = EXTRACT_READ_COUNT.out.read_counts.view()
+    nanostats = NANOPLOT.out.txt
     
     NANOQC(reads)
     ch_versions = ch_versions.mix(NANOQC.out.versions) 
    
     emit:
     versions = ch_versions
-    read_counts
+    nanostats
+
 }
