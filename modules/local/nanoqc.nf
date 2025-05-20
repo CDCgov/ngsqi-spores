@@ -24,8 +24,8 @@ process NANOQC {
         ${fastq}
 
 cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        nanoqc: \$(nanoQC --version | sed 's/^.*nanoQC //; s/[^0-9.]//g')
+"${task.process}":
+    nanoqc: \$(nanoQC --version | sed 's/^.*nanoQC //; s/[^0-9.]//g')
 END_VERSIONS
 """
 }
