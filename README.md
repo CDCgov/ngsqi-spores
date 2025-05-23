@@ -39,7 +39,7 @@ This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/l
 
 ## Usage
 
-> [!NOTE]
+>**Note**
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
 > To run the SPORES pipeline minimal test, you will need to add your user-specific credentials for the --ncbi_email and 
@@ -103,7 +103,7 @@ nextflow run main.nf \
    -profile singularity,cdc
 ```
 
-> [!WARNING]
+>**Warning**
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
 > see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
 
