@@ -34,7 +34,7 @@ workflow SIMULATION {
         
     // Use nf-core SEQTK_SAMPLE module 
     reads_with_sample_size = reads_with_meta.map { meta, fastq ->
-        [meta, fastq, 0.25]  // Sample 25% of reads 
+        [meta, fastq, 0.1]
     }
     SEQTK_SAMPLE(reads_with_sample_size)
     
