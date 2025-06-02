@@ -6,16 +6,16 @@
 
 ## Introduction
 
-**SPORES: Simulation, Phylogeny Estimation, Read Optimization, Resistance Mutation Identification and Evaluation, and Sequence Annotation** is a bioinformatics pipeline that performs quality control and preprocessing on empirical long sequencing reads, incorporates variants of interest into reference genomes, and generates long read in silico datasets using empirically derived error models and genomes containing variants of interest.
+**SPORES: Simulation, Phylogeny Estimation, Read Optimization, Resistance Mutation Identification and Evaluation, and Sequence Annotation** is a bioinformatics pipeline that performs quality control and preprocessing on empirical, long sequencing reads, incorporates variants of interest into reference genomes, and generates long-read _in silico_ datasets using empirically derived error models and genomes containing variants of interest.
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A522.10.6-23aa62.svg?labelColor=000000)](https://www.nextflow.io/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 
 The primary objectives of the SPORES workflow entail:
 
-* Generate long read in silico datasets based on genome sequences containing variants of interest and empirical long read error models
-* Perform preprocessing and error modeling on empirical long read datasets
-* Verify quality of empirical long reads and simulated in silico datasets 
+* Generate long-read _in silico_ datasets based on genome sequences containing variants of interest and empirical long-read error models
+* Perform preprocessing and error modeling on empirical long-read datasets
+* Verify quality of empirical long reads and simulated _in silico_ datasets 
 
 <!-- TODO nf-core:
    Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
@@ -30,9 +30,9 @@ The primary objectives of the SPORES workflow entail:
 This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) and utilizes docker and singularity containers to modularize the workflow for optimal maintenance and reproducibility.
 
 # Pipeline Summary
-1. Input long read sequencing data (.fastq) and reference genomes (.fna)
+1. Input long-read sequencing data (.fastq) and reference genomes (.fna)
 2. Perform quality control on sequencing reads using NanoPack tools (`NanoComp`,`NanoPlot`,`NanoQC`)
-3. Preprocess empirical long read data by filtering reads based on quality and length (`chopper`)
+3. Preprocess empirical long-read data by filtering reads based on quality and length (`chopper`)
 4. Prepare reference genomes for BWA alignment and variant calling (`NUCmer`,`bedtools`,`BWA`,`SAMtools`)
 5. Modify reference genomes to contain variants of interest and simulate long sequencing reads (`SeqIO`,`NanoSim`)
 6. Generate versions report
@@ -51,7 +51,7 @@ This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/l
 
 ### Set Up:
 
-First, prepare a samplesheet with your input empirical long read data that looks as follows:
+First, prepare a samplesheet with your input, empirical long-read data so that it resembles the following:
 
 `samplesheet.csv`:
 
@@ -61,9 +61,9 @@ Sample1, assets/data/B20592.fastq.gz
 Sample2, assets/data/B21256.fastq.gz
 ```
 
-Each row represents a long read fastq file.
+Each row represents a long-read fastq file.
 
-You will need to also prepare a samplesheet for reference genomes and variant annotations of interest to be used in simulation. 
+You will also need to prepare a samplesheet for reference genomes and variant annotations of interest to be used in simulation. 
 
 `reference_samplesheet.csv`:
 ```csv
@@ -75,11 +75,11 @@ Each row corresponds to the following information:
 
 - `reference`: Reference genome accession from NCBI
 
-- `clade`: Clade number associated with Candid auris reference genome
+- `clade`: Clade number associated with _Candida auris_ reference genome
 
 - `var_id`: Label for the given variant of interest
 
-- `chrom`: Chromosome corresponding with variant of interest location
+- `chrom`: Chromosome corresponding to variant of interest location
 
 - `pos`: Numerical nucleotide position of variant of interest (use 0-based indexing)
 
@@ -87,7 +87,6 @@ Each row corresponds to the following information:
 
 For instructions on creating an NCBI account and obtaining an API key, please visit the [National Library of Medicine Support Center](https://support.nlm.nih.gov/kbArticle/?pn=KA-05317).
 
-Now, you can run the pipeline using:
 
 <!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
 ### Running SPORES:
@@ -104,14 +103,14 @@ nextflow run main.nf \
 ```
 
 >**Warning**
-> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
+> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files, including those provided by the `-c` Nextflow option, can be used to provide any configuration _**except for parameters**_;
 > see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
 
 ## Credits
 
-SPORES was originally written by the Next Generation Sequencing (NGS) Quality Initiative (QI) In silico Team.
+SPORES was originally written by the Next Generation Sequencing (NGS) Quality Initiative (QI) _In Silico_ Team.
 
-We thank the following people for their extensive assistance in the development of this pipeline:
+We thank the following groups for their extensive assistance in the development of this pipeline:
 
 - CDC Mycotic Diseases Branch (MDB)
 - CDC Office of Advanced Molecular Detection (OAMD)
