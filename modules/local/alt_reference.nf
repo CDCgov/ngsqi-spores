@@ -7,7 +7,7 @@ process ALTREFERENCE {
     path altreference_script
 
     output:
-    tuple val(ID), path(ref_file), path("${ID}_${clade}_${var_id}_altreference.fna"), emit: alt_genomes
+    tuple val(ID), path(ref_file), val(clade), val(var_id), path("${ID}_${clade}_${var_id}_altreference.fna"), emit: alt_genomes
     path "versions.yml", emit: versions
 
     script:
