@@ -38,6 +38,7 @@ include { QC } from '../subworkflows/local/qc'
 include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 include { QC as QC_CLEAN } from '../subworkflows/local/qc'
 include { EXTRACT_READ_COUNT } from '../modules/local/extract_read_count.nf'
+include { VARIANT_CALLING } from '../subworkflows/local/variant'
 include { SIMULATION } from '../subworkflows/local/simulation'
 include { QCSIM } from '../subworkflows/local/qcsim'
 
@@ -87,7 +88,7 @@ workflow SPORES {
 
     VALIDATE_FASTAS (file(ch_fastas), params.download_script, params.ncbi_email, params.ncbi_api_key)
     ch_versions = ch_versions.mix(VALIDATE_FASTAS.out.versions)
-    fastas = VALIDATE_FASTAS.out.ref_path.view()
+    fastas = VALIDATE_FASTAS.out.ref_path
     ref_fastas = VALIDATE_FASTAS.out.ref_fastas
 
 /*
@@ -131,6 +132,13 @@ workflow SPORES {
     REF_PREP ( ref_fastas )
     ch_versions = ch_versions.mix(REF_PREP.out.versions)
 
+/*
+    ================================================================================
+                                VARIANT DETECTION
+    ================================================================================
+    */
+    VARIANT_CALLING(trimmed,fastas)
+    ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 /*
     ================================================================================
                                 Simulation

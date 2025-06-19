@@ -34,10 +34,10 @@ output:
           description: |
             Groovy Map containing sample information
             e.g. [ id:'test', single_end:false ]
-      - "*.fa.gz":
+      - "*.vcf":
           type: file
           description: Polished genome assembly
-          pattern: "*.fa.gz"
+          pattern: "*.vcf"
   - versions:
       - versions.yml:
           type: file
