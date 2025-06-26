@@ -15,17 +15,7 @@ The primary objectives of the SPORES workflow entail:
 
 * Generate long-read _in silico_ datasets based on genome sequences containing variants of interest and empirical long-read error models
 * Perform preprocessing and error modeling on empirical long-read datasets
-* Verify quality of empirical long reads and simulated _in silico_ datasets 
-
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
-
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
+* Verify quality of empirical long reads and simulated _in silico_ datasets
 
 This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) and utilizes docker and singularity containers to modularize the workflow for optimal maintenance and reproducibility.
 
@@ -37,33 +27,13 @@ This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/l
 5. Modify reference genomes to contain variants of interest and simulate long sequencing reads (`SeqIO`,`NanoSim`)
 6. Generate versions report
 
-## Getting Started
-
-Before running the pipeline, ensure Git LFS is installed and set up.
-
-### 1. Install Git LFS
-Run the following command to install Git LFS:
-```sh
-git lfs install
-```
-### 2. Clone the repository
-Use:
-```sh
-git clone <repo-url>
-```
-### 3. Pull LFS tracked files
-After cloning, run:
-```sh
-git lfs pull
-```
-
 ## Usage
 
 >**Note**
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-> To run the SPORES pipeline minimal test, you will need to add your user-specific credentials for the --ncbi_email and 
-> --ncbi_api_key parameters to the profile script located at conf/test.config. 
+> To run the SPORES pipeline minimal test, you will need to add your user-specific credentials for the --ncbi_email and
+> --ncbi_api_key parameters to the profile script located at conf/test.config.
 
 > Once complete, you can run the minimal test
 > with the following command:
@@ -83,7 +53,7 @@ Sample2, assets/data/B21256.fastq.gz
 
 Each row represents a long-read fastq file.
 
-You will also need to prepare a samplesheet for reference genomes and variant annotations of interest to be used in simulation. 
+You will also need to prepare a samplesheet for reference genomes and variant annotations of interest to be used in simulation.
 
 `reference_samplesheet.csv`:
 ```csv
@@ -108,7 +78,6 @@ Each row corresponds to the following information:
 For instructions on creating an NCBI account and obtaining an API key, please visit the [National Library of Medicine Support Center](https://support.nlm.nih.gov/kbArticle/?pn=KA-05317).
 
 
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
 ### Running SPORES:
 Now, you can run the pipeline using:
 
@@ -137,18 +106,14 @@ We thank the following groups for their extensive assistance in the development 
 - CDC Office of Laboratory Science and Safety (OLSS)
 - CDC Division of Laboratory Systems (DLS)
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
-
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
 
 ## Citations
 
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use ngsqi/spores for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+If you use ngsqi/spores for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX)
 
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
@@ -163,7 +128,7 @@ This pipeline uses code and infrastructure developed and maintained by the [nf-c
 
 **Template for clearance: This project serves as a template to aid projects in starting up and moving through clearance procedures. To start, create a new repository and implement the required [open practices](open_practices.md), train on and agree to adhere to the organization's [rules of behavior](rules_of_behavior.md), and [send a request through the create repo form](https://forms.office.com/Pages/ResponsePage.aspx?id=aQjnnNtg_USr6NJ2cHf8j44WSiOI6uNOvdWse4I-C2NUNk43NzMwODJTRzA4NFpCUk1RRU83RTFNVi4u) using language from this template as a Guide.**
 
-**General disclaimer** This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/cdc/#cdc_about_cio_mission-our-mission).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise. 
+**General disclaimer** This repository was created for use by CDC programs to collaborate on public health related projects in support of the [CDC mission](https://www.cdc.gov/about/cdc/#cdc_about_cio_mission-our-mission).  GitHub is not hosted by the CDC, but is a third party website used by CDC and its partners to share information and collaborate on software. CDC use of GitHub does not imply an endorsement of any one particular service, product, or enterprise.
 
 ## Access Request, Repo Creation Request
 
@@ -181,7 +146,7 @@ This pipeline uses code and infrastructure developed and maintained by the [nf-c
 ## Overview
 
 Describe the purpose of your project. Add additional sections as necessary to help collaborators and potential collaborators understand and use your project.
-  
+
 ## Public Domain Standard Notice
 This repository constitutes a work of the United States Government and is not
 subject to domestic copyright protection under 17 USC § 105. This repository is in
