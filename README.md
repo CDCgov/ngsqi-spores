@@ -34,6 +34,7 @@ This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/l
 
 > To run the SPORES pipeline minimal test, you will need to add your user-specific credentials for the --ncbi_email and
 > --ncbi_api_key parameters to the profile script located at conf/test.config.
+> You can access test data [here](https://centersfordiseasecontrol.sharefile.com/d-s63030912284d45618a85c0b81b3fcfc7).
 
 > Once complete, you can run the minimal test
 > with the following command:
