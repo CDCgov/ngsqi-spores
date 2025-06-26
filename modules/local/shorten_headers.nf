@@ -1,12 +1,11 @@
 process SHORTENHEADERS {
-    container "${projectDir}/third_party/nanosim.sif"
 
     input:
     tuple val(ref_id), path(ref_path), path(alt_ref_path), val(sample_id), path(fastq), val(clade), val(var_id)
 
     output:
     tuple val(sample_id), val(ref_id), path("shortened_${fastq.baseName}.fastq"), val(clade), val(var_id), emit: shortened_fastq
-    
+
     script:
     """
     # Create a file with shortened headers (uncompressed)
