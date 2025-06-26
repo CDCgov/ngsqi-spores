@@ -11,15 +11,14 @@ process NANOSIMSIMULATION {
     tuple val(sample_id), val(ID), path("${sample_id}_${ID}_${clade}_${var_id}_aligned_reads.fastq.gz"), val(clade), val(var_id), emit: nanosim_output
     path "${sample_id}_${ID}_${clade}_${var_id}*.log", emit: log_files
     path "versions.yml", emit: versions
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/nanosim:3.2.2--hdfd78af_1' :
+        'biocontainers/nanosim:3.2.2--hdfd78af_1' }"
     
     script:
     """
     # Copy model files from model directory to current working directory
     cp ${model_dir}/${model_prefix}* .
-
-    # List what we have for debugging
-    echo "Model files copied:"
-    ls -la *${model_prefix}*
 
     #Run simulator
     simulator.py genome \\
@@ -48,7 +47,7 @@ process NANOSIMSIMULATION {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        nanosim_simulation: NanoSim 3.2.2
+        nanosim_simulation: \$(simulator.py --version | sed 's/ //g')
     END_VERSIONS
     """
 }

@@ -16,7 +16,7 @@ process ALTREFERENCE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        python_altreference: \$(echo \$(python --version 2>&1) | sed 's/^.*nanosim //; s/Using.*\$//')
+        python: \$(python --version | sed 's/Python //g')
     END_VERSIONS
     """
 }

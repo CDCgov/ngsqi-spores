@@ -1,5 +1,7 @@
 process READANALYSIS {
-    container "${projectDir}/third_party/nanosim.sif"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/nanosim:3.2.2--hdfd78af_1' :
+        'biocontainers/nanosim:3.2.2--hdfd78af_1' }"
     
     input:
     tuple val(sample_id), val(ref_id), path(shortened_fastq), val(clade), val(var_id), path(alt_ref_path)
@@ -12,10 +14,6 @@ process READANALYSIS {
    
     script:
     """
-    # Initialize conda and activate the environment that should be in the container
-    eval "\$(conda shell.bash hook)"
-    conda activate nanosim
-
     mkdir -p "${sample_id}_${ref_id}_model"
 
     read_analysis.py genome \\
@@ -32,7 +30,7 @@ process READANALYSIS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-      nanosim_readanalysis: NanoSim 3.2.2
+      nanosim_readanalysis: \$(read_analysis.py --version | sed 's/ //g')
     END_VERSIONS
     """
 }
