@@ -1,5 +1,7 @@
 process NANOSIMSIMULATION {
-    container "${projectDir}/third_party/nanosim.sif"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    'https://depot.galaxyproject.org/singularity/nanosim:3.2.2--hdfd78af_1' :
+    'biocontainers/nanosim:3.2.2--hdfd78af_1' }"
     tag "sample: ${sample_id} ref: ${ID}"
 
     cpus 8
@@ -16,10 +18,6 @@ process NANOSIMSIMULATION {
     """
     # Copy model files from model directory to current working directory
     cp ${model_dir}/${model_prefix}* .
-
-    # List what we have for debugging
-    echo "Model files copied:"
-    ls -la *${model_prefix}*
 
     #Run simulator
     simulator.py genome \\
@@ -48,7 +46,7 @@ process NANOSIMSIMULATION {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        nanosim_simulation: NanoSim 3.2.2
+        nanosim_simulation: \$(simulator.py --version | sed 's/ //g')
     END_VERSIONS
     """
 }
