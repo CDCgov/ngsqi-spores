@@ -45,14 +45,14 @@
                     "format": "file-path",
                     "description": "Python script for downloading reference genomes from NCBI",
                     "fa_icon": "fas fa-folder-open",
-                    "default": "/scicomp/home-pure/xvp4/spores/scripts/download_genome.py"
+                    "default": "scripts/download_genome.py"
                 },
                 "altreference_script": {
                     "type": "string",
                     "format": "file-path",
                     "description": "Python script for generating reference genomes with variants of interest",
                     "fa_icon": "fas fa-folder-open",
-                    "default": "/scicomp/home-pure/xvp4/spores/scripts/edit_reference.py"
+                    "default": "scripts/edit_reference.py"
                 },
                 "ncbi_email": {
                     "type": "string",
