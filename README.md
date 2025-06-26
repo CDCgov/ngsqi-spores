@@ -30,7 +30,9 @@ This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/l
 ## Usage
 
 >**Note**
-> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
+> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow.
+> Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
+> Access test data [here](https://centersfordiseasecontrol.sharefile.com/d-s4cdad2064be34f5580299f6edc9b8d40) and update samplesheet path in assets/ folder.
 
 > To run the SPORES pipeline minimal test, you will need to add your user-specific credentials for the --ncbi_email and
 > --ncbi_api_key parameters to the profile script located at conf/test.config.
