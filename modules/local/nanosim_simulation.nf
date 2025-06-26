@@ -13,6 +13,9 @@ process NANOSIMSIMULATION {
     tuple val(sample_id), val(ID), path("${sample_id}_${ID}_${clade}_${var_id}_aligned_reads.fastq.gz"), val(clade), val(var_id), emit: nanosim_output
     path "${sample_id}_${ID}_${clade}_${var_id}*.log", emit: log_files
     path "versions.yml", emit: versions
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/nanosim:3.2.2--hdfd78af_1' :
+        'biocontainers/nanosim:3.2.2--hdfd78af_1' }"
     
     script:
     """
