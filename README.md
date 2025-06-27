@@ -1,9 +1,5 @@
 # :mushroom: SPORES: Simulation, Phylogeny Estimation, Read Optimization, Resistance Mutation Identification and Evaluation, and Sequence Annotation
 
-### :mushroom: **Pipeline Under Development** :mushroom:
-
-![Pipeline Status](https://img.shields.io/badge/status-in%20development-blue?style=flat&logo=mushroom)
-
 ## Introduction
 
 **SPORES: Simulation, Phylogeny Estimation, Read Optimization, Resistance Mutation Identification and Evaluation, and Sequence Annotation** is a bioinformatics pipeline that performs quality control and preprocessing on empirical, long sequencing reads, incorporates variants of interest into reference genomes, and generates long-read _in silico_ datasets using empirically derived error models and genomes containing variants of interest.
