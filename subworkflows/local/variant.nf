@@ -21,7 +21,6 @@ workflow VARIANT_CALLING {
         .first()
         .set { ch_first_fasta }
 
-    // Combine each trimmed entry with the first fasta
     trimmed
         .combine(ch_first_fasta)
         .map { meta, reads, reference, clade, var_id, chrom, pos, var_seq, fasta_file ->
@@ -36,24 +35,23 @@ workflow VARIANT_CALLING {
             ]
             return tuple(combined_meta, reads, fasta_file)
         }
-        .view()
         .set { input_with_meta }
+
+    input_with_meta
+        .map { meta, reads, fasta -> tuple(meta, fasta) }
+        .set { meta_fasta_only }
     
-    // Extract just the fasta for indexing
     input_with_meta
         .map { meta, reads, fasta_file -> 
-            // Create a simple meta for the fasta
             def fasta_meta = [id: fasta_file.baseName]
             return tuple(fasta_meta, fasta_file)
         }
-        .unique()  // Only index each unique fasta once
+        .unique()
         .set { ch_fasta_for_indexing }
     
-    // Index the assembly FASTA
     SAMTOOLS_FAIDX(ch_fasta_for_indexing)
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
     
-    // Combine reads with fasta+index for medaka
     input_with_meta
         .map { meta, reads, fasta_file -> 
             def fasta_meta = [id: fasta_file.baseName]
@@ -71,5 +69,6 @@ workflow VARIANT_CALLING {
 
     emit:
     medaka_variants
+    meta_fasta_only
     versions = ch_versions
 }
