@@ -39,6 +39,7 @@ include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 include { QC as QC_CLEAN } from '../subworkflows/local/qc'
 include { EXTRACT_READ_COUNT } from '../modules/local/extract_read_count.nf'
 include { VARIANT_CALLING } from '../subworkflows/local/variant'
+include {PHYLOGENY_ESTIMATION} from '../subworkflows/local/phylogeny_estimation.nf'
 include { SIMULATION } from '../subworkflows/local/simulation'
 include { QCSIM } from '../subworkflows/local/qcsim'
 
@@ -139,6 +140,15 @@ workflow SPORES {
     */
     VARIANT_CALLING(trimmed,fastas)
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
+
+/*
+    ================================================================================
+                                PHYLOGENY ESTIMATION
+    ================================================================================
+    */
+    compress= false
+    PHYLOGENY_ESTIMATION(compress,input_alignment_ch)
+    ch_versions = ch_versions.mix(PHYLOGENY_ESTIMATION.out.versions)
 /*
     ================================================================================
                                 Simulation
