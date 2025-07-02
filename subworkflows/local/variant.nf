@@ -5,11 +5,13 @@
 */
 include { SAMTOOLS_FAIDX } from '../../modules/nf-core/samtools/faidx/main'
 include { MEDAKA } from '../../modules/nf-core/medaka/main'
+//include { SNPEFF_SNPEFF } from '../../modules/nf-core/snpeff/snpeff/main'
 
 workflow VARIANT_CALLING { 
     take:
     trimmed
     fastas
+    //snpeff_db
 
     main:
     ch_versions = Channel.empty()
@@ -67,7 +69,11 @@ workflow VARIANT_CALLING {
     medaka_variants = MEDAKA.out.vcf
     ch_versions = ch_versions.mix(MEDAKA.out.versions)
 
+    //SNPEFF_SNPEFF(medaka_variants,snpeff_db)
+    //ch_versions = ch_versions.mix(SNPEFF_SNPEFF.out.versions)
+
     emit:
+    ch_first_fasta
     medaka_variants
     meta_fasta_only
     versions = ch_versions
