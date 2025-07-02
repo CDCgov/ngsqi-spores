@@ -7,7 +7,7 @@ process FASTTREE {
         'biocontainers/fasttree:2.1.10--h516909a_4' }"
 
     input:
-    path alignment
+    tuple val(meta), path(alignment)
 
     output:
     path "*.tre",         emit: phylogeny

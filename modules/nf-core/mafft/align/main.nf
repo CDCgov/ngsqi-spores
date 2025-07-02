@@ -1,4 +1,3 @@
-
 process MAFFT_ALIGN {
     tag "$meta.id"
     label 'process_high'
@@ -31,6 +30,11 @@ process MAFFT_ALIGN {
         ${fasta} \\
         ${write_output}
 
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        mafft: \$(mafft --version 2>&1 | sed 's/^v//' | sed 's/ (.*)//')
+        pigz: \$(echo \$(pigz --version 2>&1) | sed 's/^.*pigz\\w*//' ))
+    END_VERSIONS
 
     """
 

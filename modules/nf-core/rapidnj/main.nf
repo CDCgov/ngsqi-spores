@@ -8,7 +8,7 @@ process RAPIDNJ {
         'biocontainers/mulled-v2-805c6e0f138f952f9c61cdd57c632a1a263ea990:3c52e4c8da6b3e4d69b9ca83fa4d366168898179-0' }"
 
     input:
-    path alignment
+    tuple val(meta), path(alignment)
 
     output:
     path "*.sth"       , emit: stockholm_alignment
