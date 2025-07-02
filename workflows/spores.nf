@@ -146,9 +146,18 @@ workflow SPORES {
                                 PHYLOGENY ESTIMATION
     ================================================================================
     */
+
+   input_alignment_ch= Channel.fromPath("/scicomp/home-pure/uql9/spores/test_data/snp_multifasta.min4.fasta")
+    .map {file ->
+    def id = file.getBaseName()
+    tuple([id: id], file)
+    }
+    
+
     compress= false
-    PHYLOGENY_ESTIMATION(compress,input_alignment_ch)
-    ch_versions = ch_versions.mix(PHYLOGENY_ESTIMATION.out.versions)
+
+   PHYLOGENY_ESTIMATION(input_alignment_ch, compress)
+   ch_versions = ch_versions.mix(PHYLOGENY_ESTIMATION.out.versions)
 /*
     ================================================================================
                                 Simulation
