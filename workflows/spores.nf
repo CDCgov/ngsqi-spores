@@ -39,7 +39,7 @@ include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 include { QC as QC_CLEAN } from '../subworkflows/local/qc'
 include { EXTRACT_READ_COUNT } from '../modules/local/extract_read_count.nf'
 include { VARIANT_CALLING } from '../subworkflows/local/variant'
-include {PHYLOGENY_ESTIMATION} from '../subworkflows/local/phylogeny_estimation.nf'
+include { PHYLOGENY_ESTIMATION } from '../subworkflows/local/phylogeny_estimation.nf'
 include { SIMULATION } from '../subworkflows/local/simulation'
 include { QCSIM } from '../subworkflows/local/qcsim'
 
