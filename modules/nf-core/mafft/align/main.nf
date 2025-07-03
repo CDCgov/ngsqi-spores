@@ -33,7 +33,6 @@ process MAFFT_ALIGN {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         mafft: \$(mafft --version 2>&1 | sed 's/^v//' | sed 's/ (.*)//')
-        pigz: \$(echo \$(pigz --version 2>&1) | sed 's/^.*pigz\\w*//' ))
     END_VERSIONS
 
     """
