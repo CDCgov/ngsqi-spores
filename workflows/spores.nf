@@ -147,7 +147,7 @@ workflow SPORES {
     ================================================================================
     */
 
-    input_alignment_ch= Channel.fromPath("/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/MDB/spores/data/phylogeny_test_data/snp_multifasta.fasta.min4")
+    input_alignment_ch= Channel.fromPath("/scicomp/home-pure/tkq5/spores/snp_multifasta.min4.fasta")
     .map {file ->
     def id = file.getBaseName()
     tuple([id: id], file)
