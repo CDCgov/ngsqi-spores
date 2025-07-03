@@ -147,17 +147,17 @@ workflow SPORES {
     ================================================================================
     */
 
-   input_alignment_ch= Channel.fromPath("/scicomp/home-pure/uql9/spores/test_data/snp_multifasta.min4.fasta")
+    input_alignment_ch= Channel.fromPath("/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/MDB/spores/data/phylogeny_test_data/snp_multifasta.fasta.min4")
     .map {file ->
     def id = file.getBaseName()
     tuple([id: id], file)
     }
-    
+
 
     compress= false
 
-   PHYLOGENY_ESTIMATION(input_alignment_ch, compress)
-   ch_versions = ch_versions.mix(PHYLOGENY_ESTIMATION.out.versions)
+    PHYLOGENY_ESTIMATION(input_alignment_ch, compress)
+    ch_versions = ch_versions.mix(PHYLOGENY_ESTIMATION.out.versions)
 /*
     ================================================================================
                                 Simulation
