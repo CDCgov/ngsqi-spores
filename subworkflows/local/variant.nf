@@ -5,11 +5,13 @@
 */
 include { SAMTOOLS_FAIDX } from '../../modules/nf-core/samtools/faidx/main'
 include { MEDAKA } from '../../modules/nf-core/medaka/main'
+//include { SNPEFF_SNPEFF } from '../../modules/nf-core/snpeff/snpeff/main'
 
 workflow VARIANT_CALLING { 
     take:
     trimmed
     fastas
+    //snpeff_db
 
     main:
     ch_versions = Channel.empty()
@@ -21,7 +23,6 @@ workflow VARIANT_CALLING {
         .first()
         .set { ch_first_fasta }
 
-    // Combine each trimmed entry with the first fasta
     trimmed
         .combine(ch_first_fasta)
         .map { meta, reads, reference, clade, var_id, chrom, pos, var_seq, fasta_file ->
@@ -36,24 +37,23 @@ workflow VARIANT_CALLING {
             ]
             return tuple(combined_meta, reads, fasta_file)
         }
-        .view()
         .set { input_with_meta }
+
+    input_with_meta
+        .map { meta, reads, fasta -> tuple(meta, fasta) }
+        .set { meta_fasta_only }
     
-    // Extract just the fasta for indexing
     input_with_meta
         .map { meta, reads, fasta_file -> 
-            // Create a simple meta for the fasta
             def fasta_meta = [id: fasta_file.baseName]
             return tuple(fasta_meta, fasta_file)
         }
-        .unique()  // Only index each unique fasta once
+        .unique()
         .set { ch_fasta_for_indexing }
     
-    // Index the assembly FASTA
     SAMTOOLS_FAIDX(ch_fasta_for_indexing)
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
     
-    // Combine reads with fasta+index for medaka
     input_with_meta
         .map { meta, reads, fasta_file -> 
             def fasta_meta = [id: fasta_file.baseName]
@@ -69,7 +69,12 @@ workflow VARIANT_CALLING {
     medaka_variants = MEDAKA.out.vcf
     ch_versions = ch_versions.mix(MEDAKA.out.versions)
 
+    //SNPEFF_SNPEFF(medaka_variants,snpeff_db)
+    //ch_versions = ch_versions.mix(SNPEFF_SNPEFF.out.versions)
+
     emit:
+    ch_first_fasta
     medaka_variants
+    meta_fasta_only
     versions = ch_versions
 }
