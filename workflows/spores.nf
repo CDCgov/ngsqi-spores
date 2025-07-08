@@ -21,7 +21,6 @@ WorkflowSpores.initialise(params, log)
 */
 include { INPUT_CHECK } from '../subworkflows/local/input_check'
 include { VALIDATE_FASTAS } from '../subworkflows/local/validate_fastas'
-include { REF_PREP } from '../subworkflows/local/ref_prep'
 include { QC } from '../subworkflows/local/qc'
 include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 include { QC as QC_CLEAN } from '../subworkflows/local/qc'
@@ -118,14 +117,6 @@ workflow SPORES {
     */
     EXTRACT_READ_COUNT(nanostats)
     read_counts = EXTRACT_READ_COUNT.out.read_counts
-/*
-    ================================================================================
-                                Reference Preparation
-    ================================================================================
-    */
-    REF_PREP ( ref_fastas )
-    ch_versions = ch_versions.mix(REF_PREP.out.versions)
-
 /*
     ================================================================================
                                 VARIANT DETECTION
