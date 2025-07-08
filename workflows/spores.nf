@@ -168,8 +168,9 @@ workflow SPORES {
     */
     VARIANT_SIM(SIMULATION.out.simulated_reads,fastas)
     ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
+    medaka_variants_sim = VARIANT_SIM.out.medaka_variants
 
-    VARIANT_ANN_SIM(VARIANT_SIM.out.medaka_variants_sim,params.snpeff_db_dir,params.snpeff_config)
+    VARIANT_ANN_SIM(medaka_variants_sim,params.snpeff_db_dir,params.snpeff_config)
     ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
 /*
     ================================================================================
