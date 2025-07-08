@@ -1,6 +1,5 @@
 {
     "$schema": "https://json-schema.org/draft-07/schema",
-    "$schema": "https://json-schema.org/draft-07/schema",
     "$id": "https://raw.githubusercontent.com/ngsqi/spores/master/nextflow_schema.json",
     "title": "ngsqi/spores pipeline parameters",
     "description": "SPORES: Simulation, Phylogeny Estimation, Read Optimization, Resistance Mutation Identification and Evaluation, and Sequence Annotation",
@@ -11,7 +10,6 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "outdir", "ncbi_email", "ncbi_api_key"],
             "required": ["input", "outdir", "ncbi_email", "ncbi_api_key"],
             "properties": {
                 "input": {
@@ -57,19 +55,11 @@
                     "default": "bin/edit_reference.py"
                 },
                 "ncbi_email": {
-                "ncbi_email": {
                     "type": "string",
                     "format": "file-path",
-                    "description": "NCBI email for downloads",
-                    "fa_icon": "fas fa-folder-open"
                     "description": "NCBI email for downloads",
                     "fa_icon": "fas fa-folder-open"
                 },
-                "ncbi_api_key": {
-                    "type": "string",
-                    "format": "file-path",
-                    "description": "NCBI API key for downloads",
-                    "fa_icon": "fas fa-folder-open"
                 "ncbi_api_key": {
                     "type": "string",
                     "format": "file-path",
@@ -242,8 +232,6 @@
                     "description": "Custom MultiQC yaml file containing HTML including a methods description.",
                     "fa_icon": "fas fa-cog",
                     "hidden": true
-                    "fa_icon": "fas fa-cog",
-                    "hidden": true
                 },
                 "validate_params": {
                     "type": "boolean",
@@ -289,14 +277,6 @@
         {
             "$ref": "#/definitions/generic_options"
         }
-    ],
-    "properties": {
-        "fastas": {
-            "type": "string",
-            "fa_icon": "fas fa-file-csv"
-        }
-    },
-    "required": ["fastas"]
     ],
     "properties": {
         "fastas": {
