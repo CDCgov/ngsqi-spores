@@ -1,7 +1,5 @@
 process NANOSIMSIMULATION {
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-    'https://depot.galaxyproject.org/singularity/nanosim:3.2.2--hdfd78af_1' :
-    'biocontainers/nanosim:3.2.2--hdfd78af_1' }"
+    container "${projectDir}/third_party/nanosim.sif"
     tag "sample: ${sample_id} ref: ${ID}"
 
     cpus 8

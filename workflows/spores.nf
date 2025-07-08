@@ -27,8 +27,12 @@ include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 include { QC as QC_CLEAN } from '../subworkflows/local/qc'
 include { EXTRACT_READ_COUNT } from '../modules/local/extract_read_count.nf'
 include { VARIANT_CALLING } from '../subworkflows/local/variant'
+include { VARIANT_ANNOTATION } from '../subworkflows/local/variant_ann'
+include { PHYLOGENY_PREP } from '../subworkflows/local/phylogeny_prep'
 include { SIMULATION } from '../subworkflows/local/simulation'
 include { QC as QC_SIM } from '../subworkflows/local/qc'
+include { VARIANT_SIM } from '../subworkflows/local/variant_sim'
+include { VARIANT_ANN_SIM } from '../subworkflows/local/variant_ann_sim'
 
 
 /*
@@ -53,6 +57,8 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 if (params.fastas) { ch_fastas = file(params.fastas) } else { exit 1, 'Reference genome not specified!' }
 if (params.ncbi_email) { ncbi_email = params.ncbi_email } else { exit 1, 'NCBI email not specified!' }
 if (params.ncbi_api_key) { ncbi_api_key = params.ncbi_api_key } else { exit 1, 'NCBI API Key not specified!' }
+if (params.snpeff_db_dir) { snpeff_db_dir = params.snpeff_db_dir } else { exit 1, 'SnpEff database not specified!' }
+if (params.snpeff_config) { snpeff_config = params.snpeff_config } else { exit 1, 'SnpEff config not specified!' }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -129,6 +135,20 @@ workflow SPORES {
   //  ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 /*
     ================================================================================
+                                VARIANT ANNOTATION
+    ================================================================================
+    */
+    VARIANT_ANNOTATION(VARIANT_CALLING.out.medaka_variants,params.snpeff_db_dir,params.snpeff_config)
+    ch_versions = ch_versions.mix(VARIANT_ANNOTATION.out.versions)
+/*
+    ================================================================================
+                                PHYLOGENY PREPARATION
+    ================================================================================
+    */
+    PHYLOGENY_PREP(VARIANT_CALLING.out.medaka_variants,VARIANT_CALLING.out.meta_fasta_only)
+    ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
+/*
+    ================================================================================
                                 Simulation
     ================================================================================
     */
@@ -141,6 +161,12 @@ workflow SPORES {
     */
     QC_SIM(SIMULATION.out.simulated_reads)
     ch_versions = ch_versions.mix(QC_SIM.out.versions)
+
+    VARIANT_SIM(SIMULATION.out.simulated_reads,fastas)
+    ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
+
+    VARIANT_ANN_SIM(VARIANT_SIM.out.medaka_variants_sim,params.snpeff_db_dir,params.snpeff_config)
+    ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
 /*
     ================================================================================
                                 Versions Report
