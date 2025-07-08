@@ -14,7 +14,7 @@ def summary_params = paramsSummaryMap(workflow)
 log.info logo + paramsSummaryLog(workflow) + citation
 
 WorkflowSpores.initialise(params, log)
-
+/*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT LOCAL MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -117,16 +117,16 @@ workflow SPORES {
                                 Reference Preparation
     ================================================================================
     */
-    REF_PREP ( ref_fastas )
-    ch_versions = ch_versions.mix(REF_PREP.out.versions)
+  //  REF_PREP ( ref_fastas )
+  //  ch_versions = ch_versions.mix(REF_PREP.out.versions)
 
 /*
     ================================================================================
                                 VARIANT DETECTION
     ================================================================================
     */
-    VARIANT_CALLING(trimmed,fastas)
-    ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
+  //  VARIANT_CALLING(trimmed,fastas)
+  //  ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 /*
     ================================================================================
                                 Simulation
@@ -139,7 +139,7 @@ workflow SPORES {
                                 Quality Control - Simulation
     ================================================================================
     */
-    QC_SIM(trimmed)
+    QC_SIM(SIMULATION.out.simulated_reads)
     ch_versions = ch_versions.mix(QC_SIM.out.versions)
 /*
     ================================================================================
