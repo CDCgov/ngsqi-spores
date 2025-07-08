@@ -31,8 +31,8 @@ include { VARIANT_ANNOTATION } from '../subworkflows/local/variant_ann'
 include { PHYLOGENY_PREP } from '../subworkflows/local/phylogeny_prep'
 include { SIMULATION } from '../subworkflows/local/simulation'
 include { QC as QC_SIM } from '../subworkflows/local/qc'
-include { VARIANT_SIM } from '../subworkflows/local/variant_sim'
-include { VARIANT_ANN_SIM } from '../subworkflows/local/variant_ann_sim'
+include { VARIANT_CALLING as VARIANT_SIM } from '../subworkflows/local/variant'
+include { VARIANT_ANNOTATION as VARIANT_ANN_SIM } from '../subworkflows/local/variant_ann'
 
 
 /*
@@ -123,16 +123,16 @@ workflow SPORES {
                                 Reference Preparation
     ================================================================================
     */
-  //  REF_PREP ( ref_fastas )
-  //  ch_versions = ch_versions.mix(REF_PREP.out.versions)
+    REF_PREP ( ref_fastas )
+    ch_versions = ch_versions.mix(REF_PREP.out.versions)
 
 /*
     ================================================================================
                                 VARIANT DETECTION
     ================================================================================
     */
-  //  VARIANT_CALLING(trimmed,fastas)
-  //  ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
+    VARIANT_CALLING(trimmed,fastas)
+    ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 /*
     ================================================================================
                                 VARIANT ANNOTATION
@@ -161,7 +161,11 @@ workflow SPORES {
     */
     QC_SIM(SIMULATION.out.simulated_reads)
     ch_versions = ch_versions.mix(QC_SIM.out.versions)
-
+/*
+    ================================================================================
+                                PostSim
+    ================================================================================
+    */
     VARIANT_SIM(SIMULATION.out.simulated_reads,fastas)
     ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
 
