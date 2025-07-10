@@ -5,20 +5,18 @@
 */
 include { SAMTOOLS_FAIDX } from '../../modules/nf-core/samtools/faidx/main'
 include { MEDAKA } from '../../modules/nf-core/medaka/main'
-//include { SNPEFF_SNPEFF } from '../../modules/nf-core/snpeff/snpeff/main'
 
-workflow VARIANT_CALLING { 
+workflow VARIANT_CALLING {
     take:
     trimmed
     fastas
-    //snpeff_db
 
     main:
     ch_versions = Channel.empty()
 
     fastas
         .filter { reference, clade, var_id, chrom, pos, var_seq, fasta_file ->
-            clade == "1" 
+            clade == "1"
         }
         .first()
         .set { ch_first_fasta }
@@ -29,7 +27,7 @@ workflow VARIANT_CALLING {
             def combined_meta = meta + [
                 id: reads.baseName.replaceAll(/(_chopped_chopper)?\.fastq(\.gz)?$/, ''),
                 valID: reference,
-                clade: clade, 
+                clade: clade,
                 var_id: var_id,
                 chrom: chrom,
                 pos: pos,
@@ -42,20 +40,20 @@ workflow VARIANT_CALLING {
     input_with_meta
         .map { meta, reads, fasta -> tuple(meta, fasta) }
         .set { meta_fasta_only }
-    
+
     input_with_meta
-        .map { meta, reads, fasta_file -> 
+        .map { meta, reads, fasta_file ->
             def fasta_meta = [id: fasta_file.baseName]
             return tuple(fasta_meta, fasta_file)
         }
         .unique()
         .set { ch_fasta_for_indexing }
-    
+
     SAMTOOLS_FAIDX(ch_fasta_for_indexing)
     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
-    
+
     input_with_meta
-        .map { meta, reads, fasta_file -> 
+        .map { meta, reads, fasta_file ->
             def fasta_meta = [id: fasta_file.baseName]
             return tuple(fasta_meta, meta, reads, fasta_file)
         }
@@ -69,8 +67,6 @@ workflow VARIANT_CALLING {
     medaka_variants = MEDAKA.out.vcf
     ch_versions = ch_versions.mix(MEDAKA.out.versions)
 
-    //SNPEFF_SNPEFF(medaka_variants,snpeff_db)
-    //ch_versions = ch_versions.mix(SNPEFF_SNPEFF.out.versions)
 
     emit:
     ch_first_fasta
