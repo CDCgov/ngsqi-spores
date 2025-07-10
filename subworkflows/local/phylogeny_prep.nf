@@ -6,10 +6,10 @@
 include { BCFTOOLS_SORT } from '../../modules/nf-core/bcftools/sort/main'
 include { BCFTOOLS_MERGE } from '../../modules/nf-core/bcftools/merge/main'
 
-workflow PHYLOGENY_PREP { 
+workflow PHYLOGENY_PREP {
     take:
     medaka_variants
-    meta_fasta_only
+    ref_fastas
 
     main:
     ch_versions = Channel.empty()
@@ -21,8 +21,8 @@ workflow PHYLOGENY_PREP {
         .map { meta, vcf -> tuple('all_samples', vcf) }
         .groupTuple()
         .set { vcfs_grouped }
-        
-    BCFTOOLS_SORT.out.tbi  
+
+    BCFTOOLS_SORT.out.tbi
         .map { meta, tbi -> tuple('all_samples', tbi) }
         .groupTuple()
         .set { tbis_grouped }
@@ -35,10 +35,10 @@ workflow PHYLOGENY_PREP {
             tuple(merged_meta, vcfs, tbis)
         }
         .set { all_vcfs_collected }
-        
+
     // Take just ONE fasta file
-    single_fasta = meta_fasta_only.first()
-    
+    single_fasta = ref_fastas.first()
+
     BCFTOOLS_MERGE(all_vcfs_collected, single_fasta)
 
     ch_versions = ch_versions.mix(BCFTOOLS_MERGE.out.versions)
