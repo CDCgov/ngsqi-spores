@@ -9,7 +9,7 @@ import shutil
 def download_genome(reference_id, clade, var_id):
     Entrez.email = os.environ.get('NCBI_EMAIL', None)
     Entrez.api_key = os.environ.get('NCBI_API_KEY', None)
-    
+
     max_attempts = 5
     for attempt in range(max_attempts):
         try:
@@ -43,17 +43,17 @@ def download_genome(reference_id, clade, var_id):
 
             # Get the base filename
             base_name = os.path.basename(ftp_path)
-            
+
             # Construct the full URL for the genomic FASTA file
             file_url = f"{file_url}/{base_name}_genomic.fna.gz"
 
             # Create output filename
             gz_filename = f"{reference_id}_{clade}_{var_id}_genomic.fna.gz"
-            out_filename = f"{reference_id}_{clade}_{var_id}_genomic.fna"
-            
+            out_filename = f"{reference_id}_{clade}_{var_id}.fna"
+
             # Download the file with proper binary handling
             time.sleep(1)  # Delay to respect NCBI's rate limits
-            
+
             with urllib.request.urlopen(file_url) as response:
                 with open(gz_filename, 'wb') as out_file:
                     while True:
@@ -66,7 +66,7 @@ def download_genome(reference_id, clade, var_id):
             with gzip.open(gz_filename, 'rb') as f_in:
                 with open(out_filename, 'wb') as f_out:
                     shutil.copyfileobj(f_in, f_out)
-            
+
             # Remove the compressed file
             os.remove(gz_filename)
 
@@ -90,9 +90,9 @@ if __name__ == "__main__":
     reference_id = sys.argv[1]
     clade = sys.argv[2]
     var_id = sys.argv[3]
-    
+
     result = download_genome(reference_id, clade, var_id)
-    
+
     if result:
         print(result)  # Print the filename to stdout for Nextflow to capture
     else:
