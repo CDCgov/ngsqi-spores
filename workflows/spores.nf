@@ -42,10 +42,10 @@ include { VARIANT_CALLING } from '../subworkflows/local/variant'
 include { VARIANT_ANNOTATION } from '../subworkflows/local/variant_ann'
 include { PHYLOGENY_PREP } from '../subworkflows/local/phylogeny_prep'
 include { SIMULATION } from '../subworkflows/local/simulation'
-include { QCSIM } from '../subworkflows/local/qcsim'
-include { VARIANT_SIM } from '../subworkflows/local/variant_sim'
-include { VARIANT_ANN_SIM } from '../subworkflows/local/variant_ann_sim'
-
+include { QC as QCSIM } from '../subworkflows/local/qc'
+include { VARIANT_CALLING as VARIANT_SIM } from '../subworkflows/local/variant'
+include { VARIANT_ANNOTATION as VARIANT_ANN_SIM } from '../subworkflows/local/variant_ann'
+include { PHYLOGENY_PREP as PHYLOGENY_PREP_SIM} from '../subworkflows/local/phylogeny_prep'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,7 +99,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                Quality Control - Raw
+                            Quality Control - Raw
     ================================================================================
     */
     QC(reads)
@@ -116,7 +116,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                Quality Control - Trimmed
+                            Quality Control - Trimmed
     ================================================================================
     */
     QC_CLEAN(trimmed)
@@ -125,7 +125,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                EXTRACT READ COUNT
+                                Extract Read Count
     ================================================================================
     */
     EXTRACT_READ_COUNT(nanostats)
@@ -140,45 +140,54 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                VARIANT DETECTION
+                            Variant Calling and Annotation
     ================================================================================
     */
     VARIANT_CALLING(trimmed,fastas)
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
-/*
-    ================================================================================
-                                VARIANT ANNOTATION
-    ================================================================================
-    */
+
     VARIANT_ANNOTATION(VARIANT_CALLING.out.medaka_variants,params.snpeff_db_dir,params.snpeff_config)
     ch_versions = ch_versions.mix(VARIANT_ANNOTATION.out.versions)
 /*
     ================================================================================
-                                PHYLOGENY PREPARATION
+                                Phylogeny Estimation
     ================================================================================
     */
     PHYLOGENY_PREP(VARIANT_CALLING.out.medaka_variants,VARIANT_CALLING.out.meta_fasta_only)
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 /*
     ================================================================================
-                                Simulation
+                                    Simulation
     ================================================================================
     */
     SIMULATION(fastas, trimmed,  params.altreference_script, read_counts)
     ch_versions = ch_versions.mix(SIMULATION.out.versions)
 /*
     ================================================================================
-                                PostSim
+                            Quality Control - Simulation
     ================================================================================
     */
+    if (params.postsim) {
     QCSIM(SIMULATION.out.simulated_reads)
     ch_versions = ch_versions.mix(QCSIM.out.versions)
-
+/*
+    ================================================================================
+                    Variant Calling and Annotation - Simulation
+    ================================================================================
+    */
     VARIANT_SIM(SIMULATION.out.simulated_reads,fastas)
     ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
 
     VARIANT_ANN_SIM(VARIANT_SIM.out.medaka_variants_sim,params.snpeff_db_dir,params.snpeff_config)
     ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
+/*
+    ================================================================================
+                            Phylogeny Estimation - Simulation
+    ================================================================================
+    */
+    PHYLOGENY_PREP_SIM(VARIANT_SIM.out.medaka_variants,VARIANT_SIM.out.meta_fasta_only)
+    ch_versions = ch_versions.mix(PHYLOGENY_PREP_SIM.out.versions)
+    }
 /*
     ================================================================================
                                 Versions Report
