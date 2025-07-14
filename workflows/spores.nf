@@ -167,7 +167,7 @@ workflow SPORES {
                             Quality Control - Simulation
     ================================================================================
     */
-    if (params.postsim) {
+    
     QCSIM(SIMULATION.out.simulated_reads)
     ch_versions = ch_versions.mix(QCSIM.out.versions)
 /*
@@ -175,10 +175,11 @@ workflow SPORES {
                     Variant Calling and Annotation - Simulation
     ================================================================================
     */
+    if (params.postsim) {
     VARIANT_SIM(SIMULATION.out.simulated_reads,fastas)
     ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
 
-    VARIANT_ANN_SIM(VARIANT_SIM.out.medaka_variants_sim,params.snpeff_db_dir,params.snpeff_config)
+    VARIANT_ANN_SIM(VARIANT_SIM.out.medaka_variants,params.snpeff_db_dir,params.snpeff_config)
     ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
 /*
     ================================================================================

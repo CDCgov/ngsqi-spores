@@ -33,7 +33,7 @@ workflow PHYLOGENY_PREP {
     BCFTOOLS_CONSENSUS(individual_consensus_inputs)
     ch_versions = ch_versions.mix(BCFTOOLS_CONSENSUS.out.versions)
 
-    // Collect files for combination
+    // Collect files
     consensus_files = BCFTOOLS_CONSENSUS.out.fasta
         .map { meta, fasta -> fasta }
         .collect()
