@@ -21,6 +21,7 @@ WorkflowSpores.initialise(params, log)
 */
 include { INPUT_CHECK } from '../subworkflows/local/input_check'
 include { VALIDATE_FASTAS } from '../subworkflows/local/validate_fastas'
+include { REF_PREP } from '../subworkflows/local/ref_prep'
 include { QC } from '../subworkflows/local/qc'
 include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 include { QC as QC_CLEAN } from '../subworkflows/local/qc'
@@ -119,50 +120,69 @@ workflow SPORES {
     read_counts = EXTRACT_READ_COUNT.out.read_counts
 /*
     ================================================================================
+                                Reference Preparation
+    ================================================================================
+    */
+    REF_PREP (ref_fastas)
+    fai = REF_PREP.out.fai
+    masked = REF_PREP.out.masked
+    ch_versions = ch_versions.mix(REF_PREP.out.versions)
+
+/*
+    ================================================================================
                                 VARIANT DETECTION
     ================================================================================
     */
-    VARIANT_CALLING(trimmed,fastas)
+    VARIANT_CALLING(trimmed, fastas, masked, fai)
+    medaka_variants = VARIANT_CALLING.out.medaka_variants
+    medaka_variants.view()
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
+
 /*
     ================================================================================
                                 VARIANT ANNOTATION
     ================================================================================
     */
-    VARIANT_ANNOTATION(VARIANT_CALLING.out.medaka_variants,params.snpeff_db_dir,params.snpeff_config)
+    VARIANT_ANNOTATION(medaka_variants, params.snpeff_db_dir, params.snpeff_config)
     ch_versions = ch_versions.mix(VARIANT_ANNOTATION.out.versions)
+
 /*
     ================================================================================
                                 PHYLOGENY PREPARATION
     ================================================================================
     */
-    PHYLOGENY_PREP(VARIANT_CALLING.out.medaka_variants,VARIANT_CALLING.out.meta_fasta_only)
+    PHYLOGENY_PREP(medaka_variants, ref_fastas)
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
+
 /*
     ================================================================================
                                 Simulation
     ================================================================================
     */
     SIMULATION(fastas, trimmed,  params.altreference_script, read_counts)
+    simulated_reads = SIMULATION.out.simulated_reads
     ch_versions = ch_versions.mix(SIMULATION.out.versions)
+
 /*
     ================================================================================
                                 Quality Control - Simulation
     ================================================================================
     */
-    QC_SIM(SIMULATION.out.simulated_reads)
+    QC_SIM(simulated_reads)
     ch_versions = ch_versions.mix(QC_SIM.out.versions)
+
 /*
     ================================================================================
                                 PostSim
     ================================================================================
     */
-    VARIANT_SIM(SIMULATION.out.simulated_reads,fastas)
+    VARIANT_SIM(simulated_reads, fastas, masked, fai)
     ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
     medaka_variants_sim = VARIANT_SIM.out.medaka_variants
 
-    VARIANT_ANN_SIM(medaka_variants_sim,params.snpeff_db_dir,params.snpeff_config)
+    VARIANT_ANN_SIM(medaka_variants_sim, params.snpeff_db_dir, params.snpeff_config)
     ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
+
 /*
     ================================================================================
                                 Versions Report
