@@ -4,7 +4,8 @@
 ========================================================================================
 */
 include { BCFTOOLS_SORT } from '../../modules/nf-core/bcftools/sort/main'
-include { BCFTOOLS_MERGE } from '../../modules/nf-core/bcftools/merge/main'
+include { BCFTOOLS_CONSENSUS } from '../../modules/nf-core/bcftools/consensus/main'
+include { COMBINE_CONSENSUS } from '../../modules/local/multi_fasta'
 
 workflow PHYLOGENY_PREP {
     take:
@@ -17,35 +18,35 @@ workflow PHYLOGENY_PREP {
     BCFTOOLS_SORT(medaka_variants)
     ch_versions = ch_versions.mix(BCFTOOLS_SORT.out.versions)
 
-    BCFTOOLS_SORT.out.vcf
-        .map { meta, vcf -> tuple('all_samples', vcf) }
-        .groupTuple()
-        .set { vcfs_grouped }
+    // Get single reference fasta without meta
+    reference_fasta = meta_fasta_only.first().map { meta, fasta -> fasta }
 
-    BCFTOOLS_SORT.out.tbi
-        .map { meta, tbi -> tuple('all_samples', tbi) }
-        .groupTuple()
-        .set { tbis_grouped }
-
-    // Combine the grouped VCFs and TBIs
-    vcfs_grouped
-        .join(tbis_grouped)
-        .map { key, vcfs, tbis ->
-            def merged_meta = [id: 'merged_samples']
-            tuple(merged_meta, vcfs, tbis)
+    // Combine sorted vcf files with fasta reference
+    individual_consensus_inputs = BCFTOOLS_SORT.out.vcf
+        .join(BCFTOOLS_SORT.out.tbi, by: 0)
+        .combine(reference_fasta)
+        .map { meta, vcf, tbi, fasta ->
+            [meta, vcf, tbi, fasta]
         }
-        .set { all_vcfs_collected }
 
-    // Take just ONE fasta file
-    single_fasta = ref_fastas.first()
+    // Creates consensus for each sample
+    BCFTOOLS_CONSENSUS(individual_consensus_inputs)
+    ch_versions = ch_versions.mix(BCFTOOLS_CONSENSUS.out.versions)
 
-    BCFTOOLS_MERGE(all_vcfs_collected, single_fasta)
+    // Collect files
+    consensus_files = BCFTOOLS_CONSENSUS.out.fasta
+        .map { meta, fasta -> fasta }
+        .collect()
+        .map { files ->
+            def meta = [id: 'all_samples_consensus']
+            [meta, files]
+        }
 
-    ch_versions = ch_versions.mix(BCFTOOLS_MERGE.out.versions)
-
-    multi_fasta = BCFTOOLS_MERGE.out.vcf
+    // Combine into multi-FASTA
+    COMBINE_CONSENSUS(consensus_files)
 
     emit:
-    multi_fasta
+    individual_consensus = BCFTOOLS_CONSENSUS.out.fasta
+    multi_fasta = COMBINE_CONSENSUS.out.multi_fasta
     versions = ch_versions
 }

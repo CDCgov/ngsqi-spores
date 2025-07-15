@@ -33,7 +33,7 @@ include { SIMULATION } from '../subworkflows/local/simulation'
 include { QC as QC_SIM } from '../subworkflows/local/qc'
 include { VARIANT_CALLING as VARIANT_SIM } from '../subworkflows/local/variant'
 include { VARIANT_ANNOTATION as VARIANT_ANN_SIM } from '../subworkflows/local/variant_ann'
-
+include { PHYLOGENY_PREP as PHYLOGENY_PREP_SIM} from '../subworkflows/local/phylogeny_prep'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,7 +87,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                Quality Control - Raw
+                            Quality Control - Raw
     ================================================================================
     */
     QC(reads)
@@ -104,7 +104,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                Quality Control - Trimmed
+                            Quality Control - Trimmed
     ================================================================================
     */
     QC_CLEAN(trimmed)
@@ -113,7 +113,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                EXTRACT READ COUNT
+                                Extract Read Count
     ================================================================================
     */
     EXTRACT_READ_COUNT(nanostats)
@@ -130,7 +130,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                VARIANT DETECTION
+                            Variant Calling and Annotation
     ================================================================================
     */
     VARIANT_CALLING(trimmed, fastas, masked, fai)
@@ -148,7 +148,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                PHYLOGENY PREPARATION
+                                Phylogeny Estimation
     ================================================================================
     */
     PHYLOGENY_PREP(medaka_variants, ref_fastas)
@@ -156,7 +156,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                Simulation
+                                    Simulation
     ================================================================================
     */
     SIMULATION(fastas, trimmed,  params.altreference_script, read_counts)
@@ -173,16 +173,33 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                PostSim
+                            Quality Control - Simulation
     ================================================================================
     */
+    QCSIM(SIMULATION.out.simulated_reads)
+    ch_versions = ch_versions.mix(QCSIM.out.versions)
+/*
+    ================================================================================
+                    Variant Calling and Annotation - Simulation
+    ================================================================================
+    */
+    if (params.postsim) {
     VARIANT_SIM(simulated_reads, fastas, masked, fai)
     ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
     medaka_variants_sim = VARIANT_SIM.out.medaka_variants
+    meta_fasta_only = VARIANT_SIM.out.meta_fasta_only
 
     VARIANT_ANN_SIM(medaka_variants_sim, params.snpeff_db_dir, params.snpeff_config)
     ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
 
+/*
+    ================================================================================
+                            Phylogeny Estimation - Simulation
+    ================================================================================
+    */
+    PHYLOGENY_PREP_SIM(medaka_variants_sim, meta_fasta_only)
+    ch_versions = ch_versions.mix(PHYLOGENY_PREP_SIM.out.versions)
+    }
 /*
     ================================================================================
                                 Versions Report
