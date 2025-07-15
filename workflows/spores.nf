@@ -135,8 +135,8 @@ workflow SPORES {
     */
     VARIANT_CALLING(trimmed, fastas, masked, fai)
     medaka_variants = VARIANT_CALLING.out.medaka_variants
-    medaka_variants.view()
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
+    clade1_fastas = VARIANT_CALLING.out.clade1_fastas
 
 /*
     ================================================================================
@@ -151,7 +151,7 @@ workflow SPORES {
                                 Phylogeny Estimation
     ================================================================================
     */
-    PHYLOGENY_PREP(medaka_variants, ref_fastas)
+    PHYLOGENY_PREP(medaka_variants, clade1_fastas)
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 
 /*
@@ -173,13 +173,6 @@ workflow SPORES {
 
 /*
     ================================================================================
-                            Quality Control - Simulation
-    ================================================================================
-    */
-    QCSIM(SIMULATION.out.simulated_reads)
-    ch_versions = ch_versions.mix(QCSIM.out.versions)
-/*
-    ================================================================================
                     Variant Calling and Annotation - Simulation
     ================================================================================
     */
@@ -187,7 +180,7 @@ workflow SPORES {
     VARIANT_SIM(simulated_reads, fastas, masked, fai)
     ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
     medaka_variants_sim = VARIANT_SIM.out.medaka_variants
-    meta_fasta_only = VARIANT_SIM.out.meta_fasta_only
+    clade1_fastas = VARIANT_SIM.out.clade1_fastas
 
     VARIANT_ANN_SIM(medaka_variants_sim, params.snpeff_db_dir, params.snpeff_config)
     ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
@@ -197,7 +190,7 @@ workflow SPORES {
                             Phylogeny Estimation - Simulation
     ================================================================================
     */
-    PHYLOGENY_PREP_SIM(medaka_variants_sim, meta_fasta_only)
+    PHYLOGENY_PREP_SIM(medaka_variants_sim, clade1_fastas)
     ch_versions = ch_versions.mix(PHYLOGENY_PREP_SIM.out.versions)
     }
 /*
