@@ -45,7 +45,7 @@
                     "format": "file-path",
                     "description": "Python script for downloading reference genomes from NCBI",
                     "fa_icon": "fas fa-folder-open",
-                    "default": "bin/download_genome.py"
+                    "default": "/scicomp/home-pure/xvp4/spores/scripts/download_genome.py"
                 },
                 "altreference_script": {
                     "type": "string",
