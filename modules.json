@@ -15,10 +15,35 @@
                         "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
                         "installed_by": ["modules"]
                     },
+                    "bcftools/filter": {
+                        "branch": "master",
+                        "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
+                        "installed_by": ["modules"]
+                    },
+                    "bcftools/index": {
+                        "branch": "master",
+                        "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
+                        "installed_by": ["modules"]
+                    },
+                    "bcftools/merge": {
+                        "branch": "master",
+                        "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
+                        "installed_by": ["modules"]
+                    },
+                    "bcftools/norm": {
+                        "branch": "master",
+                        "git_sha": "39fed2e840a805454a64dda9c2ef64c00e2c6781",
+                        "installed_by": ["modules"]
+                    },
                     "bcftools/sort": {
                         "branch": "master",
                         "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
-                        "installed_by": ["vcf_gather_bcftools"]
+                        "installed_by": ["modules", "vcf_gather_bcftools"]
+                    },
+                    "bcftools/view": {
+                        "branch": "master",
+                        "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
+                        "installed_by": ["modules"]
                     },
                     "bedtools/maskfasta": {
                         "branch": "master",
@@ -68,6 +93,17 @@
                     "minimap2/index": {
                         "branch": "master",
                         "git_sha": "a532706a19b3d83f14b1d48a6a815ed33eb48b0c",
+                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "installed_by": ["modules"]
+                    },
+                    "minimap2/align": {
+                        "branch": "master",
+                        "git_sha": "a532706a19b3d83f14b1d48a6a815ed33eb48b0c",
+                        "installed_by": ["modules"]
+                    },
+                    "minimap2/index": {
+                        "branch": "master",
+                        "git_sha": "a532706a19b3d83f14b1d48a6a815ed33eb48b0c",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {
@@ -101,6 +137,7 @@
                         "installed_by": ["modules"]
                     },
                     "samtools/faidx": {
+                    "samtools/faidx": {
                         "branch": "master",
                         "git_sha": "b13f07be4c508d6ff6312d354d09f2493243e208",
                         "installed_by": ["modules"]
@@ -125,9 +162,34 @@
                         "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
                         "installed_by": ["bam_sort_stats_samtools"]
                     },
+                    "samtools/flagstat": {
+                        "branch": "master",
+                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "installed_by": ["bam_stats_samtools"]
+                    },
+                    "samtools/idxstats": {
+                        "branch": "master",
+                        "git_sha": "d090922b1a4b80ba283186459ababf8e308abcbb",
+                        "installed_by": ["bam_stats_samtools"]
+                    },
+                    "samtools/index": {
+                        "branch": "master",
+                        "git_sha": "b13f07be4c508d6ff6312d354d09f2493243e208",
+                        "installed_by": ["bam_sort_stats_samtools", "modules"]
+                    },
+                    "samtools/sort": {
+                        "branch": "master",
+                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "installed_by": ["bam_sort_stats_samtools"]
+                    },
                     "samtools/stats": {
                         "branch": "master",
                         "git_sha": "2d20463181b1c38981a02e90d3084b5f9fa8d540",
+                        "installed_by": ["bam_stats_samtools", "modules"]
+                    },
+                    "seqtk/sample": {
+                        "branch": "master",
+                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
                         "installed_by": ["bam_stats_samtools", "modules"]
                     },
                     "seqtk/sample": {
@@ -163,9 +225,34 @@
                         "branch": "master",
                         "git_sha": "d7ce2bd87533da660eb67b65a475902aa914e27d",
                         "installed_by": ["subworkflows"]
+                    },
+                    "tabix/tabix": {
+                        "branch": "master",
+                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "installed_by": ["vcf_gather_bcftools"]
+                    }
+                }
+            },
+            "subworkflows": {
+                "nf-core": {
+                    "bam_sort_stats_samtools": {
+                        "branch": "master",
+                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "installed_by": ["subworkflows"]
+                    },
+                    "bam_stats_samtools": {
+                        "branch": "master",
+                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "installed_by": ["bam_sort_stats_samtools"]
+                    },
+                    "vcf_gather_bcftools": {
+                        "branch": "master",
+                        "git_sha": "d7ce2bd87533da660eb67b65a475902aa914e27d",
+                        "installed_by": ["subworkflows"]
                     }
                 }
             }
         }
     }
+}
 }
