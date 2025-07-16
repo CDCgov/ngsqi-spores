@@ -151,7 +151,7 @@ workflow SPORES {
                                 Phylogeny Estimation
     ================================================================================
     */
-    PHYLOGENY_PREP(medaka_variants, clade1_fastas)
+    PHYLOGENY_PREP(medaka_variants, fastas)
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 
 /*
@@ -180,7 +180,6 @@ workflow SPORES {
     VARIANT_SIM(simulated_reads, fastas, masked, fai)
     ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
     medaka_variants_sim = VARIANT_SIM.out.medaka_variants
-    clade1_fastas = VARIANT_SIM.out.clade1_fastas
 
     VARIANT_ANN_SIM(medaka_variants_sim, params.snpeff_db_dir, params.snpeff_config)
     ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
@@ -190,7 +189,7 @@ workflow SPORES {
                             Phylogeny Estimation - Simulation
     ================================================================================
     */
-    PHYLOGENY_PREP_SIM(medaka_variants_sim, clade1_fastas)
+    PHYLOGENY_PREP_SIM(medaka_variants_sim, fastas)
     ch_versions = ch_versions.mix(PHYLOGENY_PREP_SIM.out.versions)
     }
 /*

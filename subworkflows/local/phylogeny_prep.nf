@@ -10,7 +10,7 @@ include { COMBINE_CONSENSUS } from '../../modules/local/multi_fasta'
 workflow PHYLOGENY_PREP {
     take:
     medaka_variants
-    clade1_fastas
+    fastas
 
     main:
     ch_versions = Channel.empty()
@@ -19,7 +19,13 @@ workflow PHYLOGENY_PREP {
     ch_versions = ch_versions.mix(BCFTOOLS_SORT.out.versions)
 
     // Get single reference fasta without meta
-    reference_fasta = clade1_fastas.first().map { meta, fasta -> fasta }
+    reference_fasta = fastas
+        .filter { reference, clade, var_id, chrom, pos, var_seq, fasta_file ->
+            clade == "1"
+        }
+        .map { reference, clade, var_id, chrom, pos, var_seq, fasta_file ->
+            fasta_file
+        }
 
     // Combine sorted vcf files with fasta reference
     individual_consensus_inputs = BCFTOOLS_SORT.out.vcf
