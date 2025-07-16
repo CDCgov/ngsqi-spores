@@ -136,7 +136,6 @@ workflow SPORES {
     VARIANT_CALLING(trimmed, fastas, masked, fai)
     medaka_variants = VARIANT_CALLING.out.medaka_variants
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
-    clade1_fastas = VARIANT_CALLING.out.clade1_fastas
 
 /*
     ================================================================================
