@@ -20,7 +20,7 @@ workflow PHYLOGENY_ESTIMATION {
     main:
     ch_versions = Channel.empty()
 
-    MAFFT_ALIGN(input_alignment_ch, compress)
+    MAFFT_ALIGN(multi_fasta, compress)
     ch_msa_alignment = MAFFT_ALIGN.out.fas
     ch_versions = ch_versions.mix(MAFFT_ALIGN.out.versions)
 
@@ -29,8 +29,6 @@ workflow PHYLOGENY_ESTIMATION {
 
     RAPIDNJ(ch_msa_alignment)
     ch_versions = ch_versions.mix(RAPIDNJ.out.versions)
-
-
 
     emit:
     versions = ch_versions
