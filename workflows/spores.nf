@@ -27,13 +27,15 @@ include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 include { QC as QC_CLEAN } from '../subworkflows/local/qc'
 include { EXTRACT_READ_COUNT } from '../modules/local/extract_read_count.nf'
 include { VARIANT_CALLING } from '../subworkflows/local/variant'
-include {  VARIANT_ANNOTATION } from '../subworkflows/local/variant_ann'
-include { PHYLOGENY_PREP  } from '../subworkflows/local/phylogeny_prep'
+include { PHYLOGENY_ESTIMATION } from '../subworkflows/local/phylogeny_estimation.nf'
+include { VARIANT_ANNOTATION } from '../subworkflows/local/variant_ann'
+include { PHYLOGENY_PREP } from '../subworkflows/local/phylogeny_prep'
 include { SIMULATION } from '../subworkflows/local/simulation'
 include { QC as QC_SIM } from '../subworkflows/local/qc'
 include { VARIANT_CALLING as VARIANT_SIM } from '../subworkflows/local/variant'
 include { VARIANT_ANNOTATION as VARIANT_ANN_SIM } from '../subworkflows/local/variant_ann'
-include { PHYLOGENY_PREP as PHYLOGENY_PREP_SIM} from '../subworkflows/local/phylogeny_prep'
+include { PHYLOGENY_PREP as PHYLOGENY_PREP_SIM } from '../subworkflows/local/phylogeny_prep'
+include { PHYLOGENY_ESTIMATION as PHYLOGENY_SIM } from '../subworkflows/local/phylogeny_estimation.nf'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -144,15 +146,19 @@ workflow SPORES {
     */
     VARIANT_ANNOTATION(medaka_variants, params.snpeff_db_dir, params.snpeff_config)
     ch_versions = ch_versions.mix(VARIANT_ANNOTATION.out.versions)
-
 /*
     ================================================================================
                                 Phylogeny Estimation
     ================================================================================
     */
     PHYLOGENY_PREP(medaka_variants, fastas)
+    multi_fasta = PHYLOGENY_PREP.out.multi_fasta
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 
+    compress= false
+
+    PHYLOGENY_ESTIMATION(multi_fasta, compress)
+    ch_versions = ch_versions.mix(PHYLOGENY_ESTIMATION.out.versions)
 /*
     ================================================================================
                                     Simulation
@@ -191,6 +197,10 @@ workflow SPORES {
     PHYLOGENY_PREP_SIM(medaka_variants_sim, fastas)
     ch_versions = ch_versions.mix(PHYLOGENY_PREP_SIM.out.versions)
     }
+    multi_fasta_sim = PHYLOGENY_PREP_SIM.out.multi_fasta
+
+    PHYLOGENY_SIM(multi_fasta_sim, compress)
+    ch_versions = ch_versions.mix(PHYLOGENY_SIM.out.versions)
 /*
     ================================================================================
                                 Versions Report
