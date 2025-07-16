@@ -14,18 +14,6 @@ def summary_params = paramsSummaryMap(workflow)
 log.info logo + paramsSummaryLog(workflow) + citation
 
 WorkflowSpores.initialise(params, log)
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CONFIG FILES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-//ch_multiqc_config          = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-//ch_multiqc_custom_config   = params.multiqc_config ? Channel.fromPath( params.multiqc_config, checkIfExists: true ) : Channel.empty()
-//ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.multiqc_logo, checkIfExists: true ) : Channel.empty()
-//ch_multiqc_custom_methods_description = params.multiqc_methods_description ? file(params.multiqc_methods_description, checkIfExists: true) : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT LOCAL MODULES/SUBWORKFLOWS
@@ -39,10 +27,13 @@ include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 include { QC as QC_CLEAN } from '../subworkflows/local/qc'
 include { EXTRACT_READ_COUNT } from '../modules/local/extract_read_count.nf'
 include { VARIANT_CALLING } from '../subworkflows/local/variant'
-include { PHYLOGENY_ESTIMATION } from '../subworkflows/local/phylogeny_estimation.nf'
+include {  VARIANT_ANNOTATION } from '../subworkflows/local/variant_ann'
+include { PHYLOGENY_PREP  } from '../subworkflows/local/phylogeny_prep'
 include { SIMULATION } from '../subworkflows/local/simulation'
-include { QCSIM } from '../subworkflows/local/qcsim'
-
+include { QC as QC_SIM } from '../subworkflows/local/qc'
+include { VARIANT_CALLING as VARIANT_SIM } from '../subworkflows/local/variant'
+include { VARIANT_ANNOTATION as VARIANT_ANN_SIM } from '../subworkflows/local/variant_ann'
+include { PHYLOGENY_PREP as PHYLOGENY_PREP_SIM} from '../subworkflows/local/phylogeny_prep'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -66,6 +57,8 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 if (params.fastas) { ch_fastas = file(params.fastas) } else { exit 1, 'Reference genome not specified!' }
 if (params.ncbi_email) { ncbi_email = params.ncbi_email } else { exit 1, 'NCBI email not specified!' }
 if (params.ncbi_api_key) { ncbi_api_key = params.ncbi_api_key } else { exit 1, 'NCBI API Key not specified!' }
+if (params.snpeff_db_dir) { snpeff_db_dir = params.snpeff_db_dir } else { exit 1, 'SnpEff database not specified!' }
+if (params.snpeff_config) { snpeff_config = params.snpeff_config } else { exit 1, 'SnpEff config not specified!' }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -94,7 +87,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                Quality Control - Raw
+                            Quality Control - Raw
     ================================================================================
     */
     QC(reads)
@@ -111,7 +104,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                Quality Control - Trimmed
+                            Quality Control - Trimmed
     ================================================================================
     */
     QC_CLEAN(trimmed)
@@ -120,7 +113,7 @@ workflow SPORES {
 
 /*
     ================================================================================
-                                EXTRACT READ COUNT
+                                Extract Read Count
     ================================================================================
     */
     EXTRACT_READ_COUNT(nanostats)
@@ -130,48 +123,74 @@ workflow SPORES {
                                 Reference Preparation
     ================================================================================
     */
-    REF_PREP ( ref_fastas )
+    REF_PREP (ref_fastas)
+    fai = REF_PREP.out.fai
+    masked = REF_PREP.out.masked
     ch_versions = ch_versions.mix(REF_PREP.out.versions)
 
 /*
     ================================================================================
-                                VARIANT DETECTION
+                            Variant Calling and Annotation
     ================================================================================
     */
-    VARIANT_CALLING(trimmed,fastas)
+    VARIANT_CALLING(trimmed, fastas, masked, fai)
+    medaka_variants = VARIANT_CALLING.out.medaka_variants
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 
 /*
     ================================================================================
-                                PHYLOGENY ESTIMATION
+                                VARIANT ANNOTATION
     ================================================================================
     */
+    VARIANT_ANNOTATION(medaka_variants, params.snpeff_db_dir, params.snpeff_config)
+    ch_versions = ch_versions.mix(VARIANT_ANNOTATION.out.versions)
 
-    input_alignment_ch= Channel.fromPath("/scicomp/home-pure/tkq5/spores/snp_multifasta.min4.fasta")
-    .map {file ->
-    def id = file.getBaseName()
-    tuple([id: id], file)
-    }
-
-
-    compress= false
-
-    PHYLOGENY_ESTIMATION(input_alignment_ch, compress)
-    ch_versions = ch_versions.mix(PHYLOGENY_ESTIMATION.out.versions)
 /*
     ================================================================================
-                                Simulation
+                                Phylogeny Estimation
+    ================================================================================
+    */
+    PHYLOGENY_PREP(medaka_variants, fastas)
+    ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
+
+/*
+    ================================================================================
+                                    Simulation
     ================================================================================
     */
     SIMULATION(fastas, trimmed,  params.altreference_script, read_counts)
+    simulated_reads = SIMULATION.out.simulated_reads
     ch_versions = ch_versions.mix(SIMULATION.out.versions)
+
 /*
     ================================================================================
-                                PostSim
+                                Quality Control - Simulation
     ================================================================================
     */
-    QCSIM(SIMULATION.out.simulated_reads)
-    ch_versions = ch_versions.mix(QCSIM.out.versions)
+    QC_SIM(simulated_reads)
+    ch_versions = ch_versions.mix(QC_SIM.out.versions)
+
+/*
+    ================================================================================
+                    Variant Calling and Annotation - Simulation
+    ================================================================================
+    */
+    if (params.postsim) {
+    VARIANT_SIM(simulated_reads, fastas, masked, fai)
+    ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
+    medaka_variants_sim = VARIANT_SIM.out.medaka_variants
+
+    VARIANT_ANN_SIM(medaka_variants_sim, params.snpeff_db_dir, params.snpeff_config)
+    ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
+
+/*
+    ================================================================================
+                            Phylogeny Estimation - Simulation
+    ================================================================================
+    */
+    PHYLOGENY_PREP_SIM(medaka_variants_sim, fastas)
+    ch_versions = ch_versions.mix(PHYLOGENY_PREP_SIM.out.versions)
+    }
 /*
     ================================================================================
                                 Versions Report
