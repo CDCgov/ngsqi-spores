@@ -14,8 +14,7 @@ include { RAPIDNJ } from '../../modules/nf-core/rapidnj/main.nf'
 workflow PHYLOGENY_ESTIMATION {
 
     take:
-
-    input_alignment_ch
+    multi_fasta
     compress
 
     main:
@@ -26,20 +25,14 @@ workflow PHYLOGENY_ESTIMATION {
     ch_versions = ch_versions.mix(MAFFT_ALIGN.out.versions)
 
     FASTTREE(ch_msa_alignment)
-    ch_fast = FASTTREE.out.phylogeny
     ch_versions = ch_versions.mix(FASTTREE.out.versions)
 
     RAPIDNJ(ch_msa_alignment)
-    ch_rapid = RAPIDNJ.out.phylogeny
-    ch_nj = RAPIDNJ.out.stockholm_alignment
     ch_versions = ch_versions.mix(RAPIDNJ.out.versions)
 
 
 
     emit:
     versions = ch_versions
-    MAFFT_ALIGN.out.fas
-    FASTTREE.out.phylogeny
-    RAPIDNJ.out.phylogeny
 
 }

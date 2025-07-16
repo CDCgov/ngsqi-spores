@@ -3,7 +3,6 @@
     REFERENCE PREPARATION
 ========================================================================================
 */
-//include { REFDOWNLOAD } from '../../modules/local/ref_download.nf'
 include { REF_FORMAT } from '../../modules/local/ref_format.nf'
 include { NUCMER } from '../../modules/nf-core/nucmer/main'
 include { COORDSTOBED } from '../../modules/local/coordstobed.nf'
@@ -23,7 +22,7 @@ workflow REF_PREP {
 
     REF_FORMAT(ref_fastas)
     ref = REF_FORMAT.out.ref_tuple
-    
+
     NUCMER(ref)
     ch_versions = ch_versions.mix(NUCMER.out.versions)
     delta = NUCMER.out.delta
@@ -43,10 +42,12 @@ workflow REF_PREP {
 
     SAMTOOLS(masked)
     ch_versions = ch_versions.mix(SAMTOOLS.out.versions)
+    fai = SAMTOOLS.out.fai
 
    emit:
    delta
    bed
    masked
+   fai
    versions = ch_versions
 }

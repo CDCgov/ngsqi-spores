@@ -4,13 +4,13 @@ process SNPEFF_SNPEFF {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/snpeff:5.1--hdfd78af_2' :
-        'biocontainers/snpeff:5.1--hdfd78af_2' }"
+        'https://depot.galaxyproject.org/singularity/snpeff:5.2--hdfd78af_1' :
+        'biocontainers/snpeff:5.2--hdfd78af_1' }"
 
     input:
     tuple val(meta), path(vcf)
-    val   db
-    tuple val(meta2), path(cache)
+    path   snpeff_dir, stageAs: 'snpeffdb'
+    path   config               
 
     output:
     tuple val(meta), path("*.ann.vcf"),   emit: vcf
@@ -26,20 +26,22 @@ process SNPEFF_SNPEFF {
     def args = task.ext.args ?: ''
     def avail_mem = 6144
     if (!task.memory) {
-        log.info '[snpEff] Available memory not known - defaulting to 6GB. Specify process memory requirements to change this.'
+        log.info '[snpEff] Available memory not known - defaulting to 6GB.'
     } else {
         avail_mem = (task.memory.mega*0.8).intValue()
     }
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def cache_command = cache ? "-dataDir \${PWD}/${cache}" : ""
+    def db_name = params.snpeffdb_name ?: "candida_auris_gca_016772135.1"
+    
     """
+    # Run SnpEff
     snpEff \\
         -Xmx${avail_mem}M \\
-        $db \\
-        $args \\
+        -c snpEff.config \\
+        ${args} \\
         -csvStats ${prefix}.csv \\
-        $cache_command \\
-        $vcf \\
+        ${db_name} \\
+        ${vcf} \\
         > ${prefix}.ann.vcf
 
     cat <<-END_VERSIONS > versions.yml
@@ -52,11 +54,13 @@ process SNPEFF_SNPEFF {
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.ann.vcf
+    touch ${prefix}.csv
+    touch ${prefix}.html
+    touch ${prefix}.genes.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         snpeff: \$(echo \$(snpEff -version 2>&1) | cut -f 2 -d ' ')
     END_VERSIONS
     """
-
 }
