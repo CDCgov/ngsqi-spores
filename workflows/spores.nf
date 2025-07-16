@@ -30,9 +30,6 @@ include { VARIANT_CALLING } from '../subworkflows/local/variant'
 include { PHYLOGENY_ESTIMATION } from '../subworkflows/local/phylogeny_estimation.nf'
 include { VARIANT_ANNOTATION } from '../subworkflows/local/variant_ann'
 include { PHYLOGENY_PREP } from '../subworkflows/local/phylogeny_prep'
-include { PHYLOGENY_ESTIMATION } from '../subworkflows/local/phylogeny_estimation.nf'
-include { VARIANT_ANNOTATION } from '../subworkflows/local/variant_ann'
-include { PHYLOGENY_PREP } from '../subworkflows/local/phylogeny_prep'
 include { SIMULATION } from '../subworkflows/local/simulation'
 include { QC as QC_SIM } from '../subworkflows/local/qc'
 include { VARIANT_CALLING as VARIANT_SIM } from '../subworkflows/local/variant'
@@ -203,7 +200,7 @@ workflow SPORES {
     multi_fasta_sim = PHYLOGENY_PREP_SIM.out.multi_fasta
 
     PHYLOGENY_SIM(multi_fasta_sim, compress)
-    ch_versions = ch_versions.mix(PHYLOGENY_ESTIMATION.out.versions)
+    ch_versions = ch_versions.mix(PHYLOGENY_SIM.out.versions)
 /*
     ================================================================================
                                 Versions Report
