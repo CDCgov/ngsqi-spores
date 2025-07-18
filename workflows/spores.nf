@@ -92,7 +92,11 @@ workflow SPORES {
                             Quality Control - Raw
     ================================================================================
     */
-    QC(reads)
+    all_reads_ch = reads
+        .map { sampleID, file -> tuple(sampleID, file) }
+        .collectFile(name: "all_reads", flatten: true)
+
+    QC(reads, all_reads)
     ch_versions = ch_versions.mix(QC.out.versions)
 
 /*
