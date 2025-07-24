@@ -105,7 +105,7 @@ We thank the following groups for their extensive assistance in the development 
 
 - CDC Mycotic Diseases Branch (MDB)
 - CDC Office of Advanced Molecular Detection (OAMD)
-- CDC Office of Laboratory Science and Safety (OLSS)
+- CDC Office of Laboratory Systems and Response (OLSR)
 - CDC Division of Laboratory Systems (DLS)
 
 ## Contributions and Support
