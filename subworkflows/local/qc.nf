@@ -13,10 +13,16 @@ include { NANOQC } from '../../modules/local/nanoqc.nf'
 workflow QC {
     take:
     reads // channel: [ val(sampleID), [reads] ]
-    all_reads // channel: [ filelist ]
 
     main:
     ch_versions = Channel.empty()
+
+    all_reads = reads
+        .map { meta, fastqs -> fastqs }
+        .flatten()
+        .collect()
+        .map { files -> tuple([id: "all"], files) }
+        .view()
 
     NANOCOMP(all_reads)
     ch_versions = ch_versions.mix(NANOCOMP.out.versions)
