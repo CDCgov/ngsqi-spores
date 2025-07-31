@@ -23,7 +23,7 @@ workflow QC {
         .collect()
         .map { files -> tuple([id: "all"], files) }
         .view()
-
+        
     NANOCOMP(all_reads)
     ch_versions = ch_versions.mix(NANOCOMP.out.versions)
 
