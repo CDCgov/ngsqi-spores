@@ -165,6 +165,7 @@ workflow SPORES {
                                     Simulation
     ================================================================================
     */
+    if (params.simulation) {
     SIMULATION(fastas, trimmed,  params.altreference_script, read_counts)
     simulated_reads = SIMULATION.out.simulated_reads
     ch_versions = ch_versions.mix(SIMULATION.out.versions)
@@ -176,7 +177,7 @@ workflow SPORES {
     */
     QC_SIM(simulated_reads)
     ch_versions = ch_versions.mix(QC_SIM.out.versions)
-
+    }
 /*
     ================================================================================
                     Variant Calling and Annotation - Simulation
