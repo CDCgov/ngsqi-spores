@@ -4,7 +4,7 @@
 ========================================================================================
 */
 
-include { MEDAKA } from '../../modules/nf-core/medaka/main'
+include { MEDAKA } from '../../modules/local/medaka/main'
 
 workflow VARIANT_CALLING {
     take:
