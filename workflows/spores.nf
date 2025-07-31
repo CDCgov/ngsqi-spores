@@ -92,10 +92,8 @@ workflow SPORES {
                             Quality Control - Raw
     ================================================================================
     */
-    all_reads = reads.collect()
 
-
-    QC(reads, all_reads)
+    QC(reads)
     ch_versions = ch_versions.mix(QC.out.versions)
 
 /*
@@ -103,52 +101,52 @@ workflow SPORES {
                                 Preprocessing
     ================================================================================
     */
-   // PREPROCESSING(reads)
-   // trimmed = PREPROCESSING.out.trimmed
-  //  ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
+    PREPROCESSING(reads)
+    trimmed = PREPROCESSING.out.trimmed
+    ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
 
 /*
     ================================================================================
                             Quality Control - Trimmed
     ================================================================================
     */
-  //  QC_CLEAN(trimmed)
-  //  nanostats = QC_CLEAN.out.nanostats
-  //  ch_versions = ch_versions.mix(QC_CLEAN.out.versions)
+    QC_CLEAN(trimmed)
+    nanostats = QC_CLEAN.out.nanostats
+    ch_versions = ch_versions.mix(QC_CLEAN.out.versions)
 
 /*
     ================================================================================
                                 Extract Read Count
     ================================================================================
     */
-  //  EXTRACT_READ_COUNT(nanostats)
-  //  read_counts = EXTRACT_READ_COUNT.out.read_counts
+    EXTRACT_READ_COUNT(nanostats)
+    read_counts = EXTRACT_READ_COUNT.out.read_counts
 /*
     ================================================================================
                                 Reference Preparation
     ================================================================================
     */
- //   REF_PREP (ref_fastas)
- //   fai = REF_PREP.out.fai
- //   masked = REF_PREP.out.masked
- //   ch_versions = ch_versions.mix(REF_PREP.out.versions)
+    REF_PREP (ref_fastas)
+    fai = REF_PREP.out.fai
+    masked = REF_PREP.out.masked
+    ch_versions = ch_versions.mix(REF_PREP.out.versions)
 
 /*
     ================================================================================
                             Variant Calling and Annotation
     ================================================================================
     */
- //   VARIANT_CALLING(trimmed, fastas, masked, fai)
- //   medaka_variants = VARIANT_CALLING.out.medaka_variants
-  //  ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
+    VARIANT_CALLING(trimmed, fastas, masked, fai)
+    medaka_variants = VARIANT_CALLING.out.medaka_variants
+    ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 
 /*
     ================================================================================
                                 VARIANT ANNOTATION
     ================================================================================
     */
- //   VARIANT_ANNOTATION(medaka_variants, params.snpeff_db_dir, params.snpeff_config)
- //   ch_versions = ch_versions.mix(VARIANT_ANNOTATION.out.versions)
+    VARIANT_ANNOTATION(medaka_variants, params.snpeff_db_dir, params.snpeff_config)
+    ch_versions = ch_versions.mix(VARIANT_ANNOTATION.out.versions)
 /*
     ================================================================================
                                 Phylogeny Estimation
@@ -167,30 +165,30 @@ workflow SPORES {
                                     Simulation
     ================================================================================
     */
- //   SIMULATION(fastas, trimmed,  params.altreference_script, read_counts)
- //   simulated_reads = SIMULATION.out.simulated_reads
- //   ch_versions = ch_versions.mix(SIMULATION.out.versions)
+    SIMULATION(fastas, trimmed,  params.altreference_script, read_counts)
+    simulated_reads = SIMULATION.out.simulated_reads
+    ch_versions = ch_versions.mix(SIMULATION.out.versions)
 
 /*
     ================================================================================
                                 Quality Control - Simulation
     ================================================================================
     */
- //   QC_SIM(simulated_reads)
- //   ch_versions = ch_versions.mix(QC_SIM.out.versions)
+    QC_SIM(simulated_reads)
+    ch_versions = ch_versions.mix(QC_SIM.out.versions)
 
 /*
     ================================================================================
                     Variant Calling and Annotation - Simulation
     ================================================================================
     */
-  //  if (params.postsim) {
-  //  VARIANT_SIM(simulated_reads, fastas, masked, fai)
-  //  ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
-  //  medaka_variants_sim = VARIANT_SIM.out.medaka_variants
+    if (params.postsim) {
+    VARIANT_SIM(simulated_reads, fastas, masked, fai)
+    ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
+    medaka_variants_sim = VARIANT_SIM.out.medaka_variants
 
-  //  VARIANT_ANN_SIM(medaka_variants_sim, params.snpeff_db_dir, params.snpeff_config)
-  //  ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
+    VARIANT_ANN_SIM(medaka_variants_sim, params.snpeff_db_dir, params.snpeff_config)
+    ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
 
 /*
     ================================================================================
@@ -204,13 +202,14 @@ workflow SPORES {
 
   //  PHYLOGENY_SIM(multi_fasta_sim, compress)
   //  ch_versions = ch_versions.mix(PHYLOGENY_SIM.out.versions)
+    }
 /*
     ================================================================================
                                 Versions Report
     ================================================================================
     */
-  //  ch_versions_unique = ch_versions.unique()
-  //  CUSTOM_DUMPSOFTWAREVERSIONS(ch_versions_unique.collectFile(name: 'collated_versions.yml'))
+    ch_versions_unique = ch_versions.unique()
+    CUSTOM_DUMPSOFTWAREVERSIONS(ch_versions_unique.collectFile(name: 'collated_versions.yml'))
 
 }
 
