@@ -65,6 +65,13 @@
                     "format": "file-path",
                     "description": "NCBI API key for downloads",
                     "fa_icon": "fas fa-folder-open"
+                },
+                "mode": {
+                    "type": "string",
+                    "default": "download",
+                    "enum": ["download", "local"],
+                    "description": "Execution mode: 'download' to fetch references from NCBI, or 'local' to use local file paths",
+                    "help_text": "When set to 'local', the samplesheet must include a 'file_path' column with paths to local FASTA files."
                 }
             }
         },
