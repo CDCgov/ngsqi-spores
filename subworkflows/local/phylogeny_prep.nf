@@ -5,8 +5,6 @@
 */
 include { BCFTOOLS_SORT } from '../../modules/nf-core/bcftools/sort/main'
 include { BCFTOOLS_MERGE } from '../../modules/nf-core/bcftools/merge/main'
-include { BCFTOOLS_CONSENSUS } from '../../modules/nf-core/bcftools/consensus/main'
-include { BCFTOOLS_VIEW } from '../../modules/nf-core/bcftools/view/main'
 include { COMBINE_CONSENSUS } from '../../modules/local/multi_fasta'
 include { VCF2PHYLIP } from '../../modules/local/vcf2phylip'
 
@@ -36,29 +34,6 @@ workflow PHYLOGENY_PREP {
 
     // Get single reference fasta for consistent use
     single_fasta = reference_fasta.first()
-
-    // CONSENSUS WORKFLOW
-    individual_consensus_inputs = BCFTOOLS_SORT.out.vcf
-        .join(BCFTOOLS_SORT.out.tbi, by: 0)
-        .combine(reference_fasta)
-        .map { meta, vcf, tbi, fasta ->
-            [meta, vcf, tbi, fasta]
-        }
-
-    //BCFTOOLS_CONSENSUS(individual_consensus_inputs)
-    //ch_versions = ch_versions.mix(BCFTOOLS_CONSENSUS.out.versions)
-
-    //consensus_files = BCFTOOLS_CONSENSUS.out.fasta
-    //    .map { meta, fasta -> fasta }
-    //    .collect()
-    //    .map { files ->
-    //        def meta = [id: 'all_samples_consensus']
-    //        [meta, files]
-    //    }
-
-    //COMBINE_CONSENSUS(consensus_files)
-
-    // VCF WORKFLOW
     
     vcf_tbi_with_meta = BCFTOOLS_SORT.out.vcf
         .join(BCFTOOLS_SORT.out.tbi, by: 0)
@@ -79,11 +54,6 @@ workflow PHYLOGENY_PREP {
     ch_versions = ch_versions.mix(VCF2PHYLIP.out.versions)
 
     emit:
-    //individual_consensus = BCFTOOLS_CONSENSUS.out.fasta
-    //multi_fasta_consensus = COMBINE_CONSENSUS.out.multi_fasta
-    //multi_fasta = COMBINE_CONSENSUS.out.multi_fasta
-    
-    // VCF-based outputs
     multi_vcf = BCFTOOLS_MERGE.out.vcf_with_index
     multi_fasta_snps = VCF2PHYLIP.out.fasta
     
