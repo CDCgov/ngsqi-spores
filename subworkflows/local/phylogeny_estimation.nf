@@ -4,12 +4,8 @@
 ========================================================================================
 */
 
-
-
-include { MAFFT_ALIGN } from '../../modules/nf-core/mafft/align/main.nf'
 include { FASTTREE } from '../../modules/nf-core/fasttree/main.nf'
 include { RAPIDNJ } from '../../modules/nf-core/rapidnj/main.nf'
-
 
 workflow PHYLOGENY_ESTIMATION {
 
@@ -19,10 +15,6 @@ workflow PHYLOGENY_ESTIMATION {
 
     main:
     ch_versions = Channel.empty()
-
-    //MAFFT_ALIGN(multi_fasta, compress)
-    //ch_msa_alignment = MAFFT_ALIGN.out.fas
-    //ch_versions = ch_versions.mix(MAFFT_ALIGN.out.versions)
 
     FASTTREE(multi_fasta_snps)
     ch_versions = ch_versions.mix(FASTTREE.out.versions)
