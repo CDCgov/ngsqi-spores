@@ -5,45 +5,15 @@
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
-                    "bcftools/concat": {
-                        "branch": "master",
-                        "git_sha": "1503efe8f6450e71218097f93cf43e4b625018d4",
-                        "installed_by": ["vcf_gather_bcftools"]
-                    },
-                    "bcftools/consensus": {
-                        "branch": "master",
-                        "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
-                        "installed_by": ["modules"]
-                    },
-                    "bcftools/filter": {
-                        "branch": "master",
-                        "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
-                        "installed_by": ["modules"]
-                    },
-                    "bcftools/index": {
-                        "branch": "master",
-                        "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
-                        "installed_by": ["modules"]
-                    },
                     "bcftools/merge": {
                         "branch": "master",
                         "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
-                        "installed_by": ["modules"]
-                    },
-                    "bcftools/norm": {
-                        "branch": "master",
-                        "git_sha": "39fed2e840a805454a64dda9c2ef64c00e2c6781",
                         "installed_by": ["modules"]
                     },
                     "bcftools/sort": {
                         "branch": "master",
                         "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
                         "installed_by": ["modules", "vcf_gather_bcftools"]
-                    },
-                    "bcftools/view": {
-                        "branch": "master",
-                        "git_sha": "c9c3ef86c1892413b3c86fb38c4e39fd7288512f",
-                        "installed_by": ["modules"]
                     },
                     "bedtools/maskfasta": {
                         "branch": "master",
@@ -83,27 +53,6 @@
                     "medaka": {
                         "branch": "master",
                         "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
-                        "installed_by": ["modules"]
-                    },
-                    "minimap2/align": {
-                        "branch": "master",
-                        "git_sha": "a532706a19b3d83f14b1d48a6a815ed33eb48b0c",
-                        "installed_by": ["modules"]
-                    },
-                    "minimap2/index": {
-                        "branch": "master",
-                        "git_sha": "a532706a19b3d83f14b1d48a6a815ed33eb48b0c",
-                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
-                        "installed_by": ["modules"]
-                    },
-                    "minimap2/align": {
-                        "branch": "master",
-                        "git_sha": "a532706a19b3d83f14b1d48a6a815ed33eb48b0c",
-                        "installed_by": ["modules"]
-                    },
-                    "minimap2/index": {
-                        "branch": "master",
-                        "git_sha": "a532706a19b3d83f14b1d48a6a815ed33eb48b0c",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {
