@@ -51,7 +51,7 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoft
     */
 
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.fastas, params.download_script, params.altreference_script ]
+def checkPathParamList = [ params.input, params.fastas, params.download_script, params.altreference_script, params.vcf2phylip_script ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
@@ -151,13 +151,13 @@ workflow SPORES {
                                 Phylogeny Estimation
     ================================================================================
     */
-    PHYLOGENY_PREP(medaka_variants, fastas)
-    multi_fasta = PHYLOGENY_PREP.out.multi_fasta
+    PHYLOGENY_PREP(medaka_variants, fastas, params.vcf2phylip_script)
+    multi_fasta_snps = PHYLOGENY_PREP.out.multi_fasta_snps
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 
     compress= false
 
-    PHYLOGENY_ESTIMATION(multi_fasta, compress)
+    PHYLOGENY_ESTIMATION(multi_fasta_snps, compress)
     ch_versions = ch_versions.mix(PHYLOGENY_ESTIMATION.out.versions)
 /*
     ================================================================================
@@ -194,13 +194,13 @@ workflow SPORES {
                             Phylogeny Estimation - Simulation
     ================================================================================
     */
-    PHYLOGENY_PREP_SIM(medaka_variants_sim, fastas)
+    PHYLOGENY_PREP_SIM(medaka_variants_sim, fastas, params.vcfSnpsToFasta_script)
     ch_versions = ch_versions.mix(PHYLOGENY_PREP_SIM.out.versions)
-    }
-    multi_fasta_sim = PHYLOGENY_PREP_SIM.out.multi_fasta
+    multi_fasta_snps_sim = PHYLOGENY_PREP_SIM.out.multi_fasta_snps
 
-    PHYLOGENY_SIM(multi_fasta_sim, compress)
+    PHYLOGENY_SIM(multi_fasta_snps_sim, compress)
     ch_versions = ch_versions.mix(PHYLOGENY_SIM.out.versions)
+    }
 /*
     ================================================================================
                                 Versions Report

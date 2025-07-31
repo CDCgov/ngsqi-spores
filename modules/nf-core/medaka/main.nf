@@ -29,6 +29,9 @@ process MEDAKA {
         -m r1041_e82_400bps_hac_variant_v4.3.0 \\
         -o ${prefix}
 
+    # Replace SAMPLE header with the actual sample name in the VCF file
+    sed 's/\\tSAMPLE\$/\\t${prefix}/' ${prefix}/medaka.annotated.vcf > ${prefix}/medaka.annotated.vcf.tmp
+    mv ${prefix}/medaka.annotated.vcf.tmp ${prefix}/medaka.annotated.vcf
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

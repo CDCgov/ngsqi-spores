@@ -1,4 +1,3 @@
-
 process BCFTOOLS_MERGE {
     tag "$meta.id"
     label 'process_medium'
