@@ -79,7 +79,7 @@ Each row corresponds to the following information:
 
 For instructions on creating an NCBI account and obtaining an API key, please visit the [National Library of Medicine Support Center](https://support.nlm.nih.gov/kbArticle/?pn=KA-05317).
 
-### ASTRO Pipeline Parameters:
+### SPORES Pipeline Parameters:
 
 - `--input`: Input long read samplesheet
 - `--fastas`: Input reference samplesheet containing variants of interest
