@@ -57,6 +57,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 if (params.fastas) { ch_fastas = file(params.fastas) } else { exit 1, 'Reference genome not specified!' }
+if (params.postsim && !params.simulation) { exit 1, "--postsim cannot be used without enabling --simulation. Please set --simulation to true." }
 if (params.ncbi_email) { ncbi_email = params.ncbi_email } else { exit 1, 'NCBI email not specified!' }
 if (params.ncbi_api_key) { ncbi_api_key = params.ncbi_api_key } else { exit 1, 'NCBI API Key not specified!' }
 if (params.snpeffdb) { snpeffdb = params.snpeffdb } else { exit 1, 'SnpEff database not specified!' }
