@@ -9,7 +9,7 @@ process BCFTOOLS_MERGE {
 
     input:
     tuple val(meta), path(vcfs), path(tbis)
-    tuple val(meta2), path(fasta)
+    //tuple val(meta2), path(fasta)
 
     output:
     tuple val(meta), path("*.{bcf,vcf}{,.gz}"), path("*.{csi,tbi}"), emit: vcf_with_index
