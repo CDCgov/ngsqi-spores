@@ -1,3 +1,3 @@
 sample,fastq
-B20592,./assets/data/B20592_downsampled.fastq.gz
-B21256,./assets/data/B21256_downsampled.fastq.gz
+B20592,/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/share/in/MDB/ONT_reads/B20592_downsample_0.025.fastq.gz
+B21256,/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/share/in/MDB/ONT_reads/B21256_downsample_0.025.fastq.gz

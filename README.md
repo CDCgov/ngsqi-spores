@@ -79,6 +79,15 @@ Each row corresponds to the following information:
 
 For instructions on creating an NCBI account and obtaining an API key, please visit the [National Library of Medicine Support Center](https://support.nlm.nih.gov/kbArticle/?pn=KA-05317).
 
+### SPORES Pipeline Parameters:
+
+- `--input`: Input long read samplesheet
+- `--fastas`: Input reference samplesheet containing variants of interest
+- `--ncbi_email`: User's NCBI email
+- `--ncbi_api_key`: User's NCBI email
+- `--mode`: Select 'local' if providing local paths to reference genomes; otherwise, select 'download'
+- `--outdir`: Name of output directory
+
 ### Running SPORES:
 
 Now, you can run the pipeline using:
@@ -89,8 +98,10 @@ nextflow run main.nf \
    --fastas reference_samplesheet.csv \
    --ncbi_email <USER NCBI EMAIL> \
    --ncbi_api_key <API KEY> \
+   --mode <local> or <download> \
    --outdir <OUTDIR> \
    -profile singularity,cdc
+   
 ```
 
 > **Warning**
