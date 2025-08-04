@@ -151,7 +151,7 @@ workflow SPORES {
                                 Phylogeny Estimation
     ================================================================================
     */
-    PHYLOGENY_PREP(medaka_variants, fastas, params.vcf2phylip_script)
+    PHYLOGENY_PREP(medaka_variants, params.vcf2phylip_script)
     multi_fasta_snps = PHYLOGENY_PREP.out.multi_fasta_snps
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 
@@ -194,7 +194,7 @@ workflow SPORES {
                             Phylogeny Estimation - Simulation
     ================================================================================
     */
-    PHYLOGENY_PREP_SIM(medaka_variants_sim, fastas, params.vcfSnpsToFasta_script)
+    PHYLOGENY_PREP_SIM(medaka_variants_sim, params.vcfSnpsToFasta_script)
     ch_versions = ch_versions.mix(PHYLOGENY_PREP_SIM.out.versions)
     multi_fasta_snps_sim = PHYLOGENY_PREP_SIM.out.multi_fasta_snps
 
