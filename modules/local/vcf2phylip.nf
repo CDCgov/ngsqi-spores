@@ -7,7 +7,7 @@ process VCF2PHYLIP {
         'biocontainers/python:3.9' }"
 
     input:
-    tuple val(meta), path(vcf), path(index)
+    tuple val(meta), path(vcf)
     path vcf2phylip_script
 
     output:

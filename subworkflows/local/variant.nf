@@ -47,5 +47,6 @@ workflow VARIANT_CALLING {
 
     emit:
     medaka_variants
+    clade1_masked
     versions = ch_versions
 }
