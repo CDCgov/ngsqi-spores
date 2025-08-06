@@ -1,6 +1,6 @@
 
 
-process FAMSA_ALIGN {
+process FAMSA_DIST {
     tag "$meta.id"
     label 'process_medium'
 
@@ -11,11 +11,10 @@ process FAMSA_ALIGN {
 
     input:
     tuple val(meta) , path(fasta)
-    tuple val(meta2), path(tree)
     val(compress)
 
     output:
-    tuple val(meta), path("*.aln{.gz,}"), emit: alignment
+    tuple val(meta), path("*.aln{.gz,}"), emit: distance
     path "versions.yml"                 , emit: versions
 
     when:
@@ -27,12 +26,12 @@ process FAMSA_ALIGN {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def options_tree = tree ? "-gt import $tree" : ""
     """
-    famsa $options_tree \\
+    famsa \\
         $compress_args \\
         $args \\
-        -t ${task.cpus} \\
+        -t 32 \\
         ${fasta} \\
-        ${prefix}.aln${compress ? '.gz':''}
+        ${prefix}.csv${compress ? '.gz':''}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -43,7 +42,7 @@ process FAMSA_ALIGN {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.aln${compress ? '.gz' : ''}
+    touch ${prefix}.csv${compress ? '.gz' : ''}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
