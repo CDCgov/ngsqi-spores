@@ -9,12 +9,13 @@ process FAMSA_DIST {
         'https://depot.galaxyproject.org/singularity/famsa:2.2.2--h9f5acd7_0':
         'biocontainers/famsa:2.2.2--h9f5acd7_0' }"
 
-    input:
+     input:
     tuple val(meta) , path(fasta)
     val(compress)
 
     output:
-    tuple val(meta), path("*.csv{.gz,}"), emit: distance
+   
+    tuple val(meta), path("*.csv{.gz,}"), emit: alignment
     path "versions.yml"                 , emit: versions
 
     when:
@@ -25,12 +26,13 @@ process FAMSA_DIST {
     def compress_args = compress ? '-gz' : ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    famsa \\
+     famsa \\
         $compress_args \\
         $args \\
         -t 32 \\
+        -dist_export \\
         ${fasta} \\
-        ${prefix}.csv${compress ? '.gz':''}
+        ${prefix}.csv ${compress ? '.gz':''}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
