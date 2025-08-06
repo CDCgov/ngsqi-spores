@@ -26,7 +26,7 @@ process FAMSA_GUIDETREE {
     famsa -gt sl \\
         -gt_export \\
         $args \\
-        -t ${task.cpus} \\
+        -t 32 \\
         ${fasta} \\
         ${prefix}_sl.dnd
 

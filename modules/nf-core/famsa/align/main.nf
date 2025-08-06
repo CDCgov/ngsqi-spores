@@ -24,7 +24,6 @@ process FAMSA_DIST {
     def args = task.ext.args ?: ''
     def compress_args = compress ? '-gz' : ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def options_tree = tree ? "-gt import $tree" : ""
     """
     famsa \\
         $compress_args \\
