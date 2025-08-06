@@ -14,7 +14,7 @@ process FAMSA_DIST {
     val(compress)
 
     output:
-    tuple val(meta), path("*.aln{.gz,}"), emit: distance
+    tuple val(meta), path("*.csv{.gz,}"), emit: distance
     path "versions.yml"                 , emit: versions
 
     when:
