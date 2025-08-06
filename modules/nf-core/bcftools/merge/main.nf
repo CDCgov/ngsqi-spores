@@ -8,11 +8,12 @@ process BCFTOOLS_MERGE {
         'community.wave.seqera.io/library/bcftools:1.21--4335bec1d7b44d11' }"
 
     input:
-    tuple val(meta), path(vcfs), path(tbis)
-    //tuple val(meta2), path(fasta)
+    tuple val(meta), path(vcfs), path(csis)
+    tuple val(meta2), path(fasta)
 
     output:
-    tuple val(meta), path("*.{bcf,vcf}{,.gz}"), path("*.{csi,tbi}"), emit: vcf_with_index
+    tuple val(meta), path("*.{bcf,vcf}{,.gz}"), emit: vcf_merged
+    //tuple val(meta), path("*.{bcf,vcf}{,.gz}"), path("*.{csi,tbi}"), emit: vcf_with_index
     path "versions.yml"                       , emit: versions
 
     when:
@@ -37,6 +38,7 @@ process BCFTOOLS_MERGE {
     bcftools merge \\
         $args \\
         --threads $task.cpus \\
+        --gvcf $fasta \\
         --output ${prefix}.${extension} \\
         $input
 
