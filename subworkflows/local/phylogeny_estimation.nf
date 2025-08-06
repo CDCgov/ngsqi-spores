@@ -16,6 +16,8 @@ workflow PHYLOGENY_ESTIMATION {
     main:
     ch_versions = Channel.empty()
 
+    FAMSA
+
     FASTTREE(multi_fasta_snps)
     ch_versions = ch_versions.mix(FASTTREE.out.versions)
 
