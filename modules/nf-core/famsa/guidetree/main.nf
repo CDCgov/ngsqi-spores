@@ -12,7 +12,8 @@ process FAMSA_GUIDETREE {
     tuple val(meta), path(fasta)
 
     output:
-    tuple val(meta), path("*.dnd"), emit: tree
+    tuple val(meta), path("*_sl.dnd"), emit: sltree
+    tuple val(meta), path("*_upgma.dnd"), emit: upgmatree
     path "versions.yml"           , emit: versions
 
     when:
@@ -22,11 +23,19 @@ process FAMSA_GUIDETREE {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    famsa -gt_export \\
+    famsa -gt sl \\
+        -gt_export \\
         $args \\
         -t ${task.cpus} \\
         ${fasta} \\
-        ${prefix}.dnd
+        ${prefix}_sl.dnd
+
+    famsa -gt upgma \\
+        -gt_export \\
+        $args \\
+        -t ${task.cpus} \\
+        ${fasta} \\
+        ${prefix}_upgma.dnd
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
