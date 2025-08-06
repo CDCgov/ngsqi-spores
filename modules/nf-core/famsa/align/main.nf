@@ -1,10 +1,8 @@
 
 
-process FAMSA_ALIGN {
+process FAMSA_DIST {
     tag "$meta.id"
-    label 'process_high_memory'
-    memory '200.GB'
-    cpus '16'
+    label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -13,11 +11,11 @@ process FAMSA_ALIGN {
 
     input:
     tuple val(meta) , path(fasta)
-    tuple val(meta2), path(tree)
     val(compress)
 
     output:
-    tuple val(meta), path("*.aln{.gz,}"), emit: alignment
+   
+    tuple val(meta), path("*.csv{.gz,}"), emit: alignment
     path "versions.yml"                 , emit: versions
 
     when:
@@ -27,14 +25,14 @@ process FAMSA_ALIGN {
     def args = task.ext.args ?: ''
     def compress_args = compress ? '-gz' : ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def options_tree = tree ? "-gt import $tree" : ""
-    //    famsa $options_tree \\
     """
-    famsa $compress_args \\
+     famsa \\
+        $compress_args \\
         $args \\
-        -t 12 \\
+        -t 32 \\
+        -dist_export \\
         ${fasta} \\
-        ${prefix}.aln${compress ? '.gz':''}
+        ${prefix}.csv ${compress ? '.gz':''}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -45,7 +43,7 @@ process FAMSA_ALIGN {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.aln${compress ? '.gz' : ''}
+    touch ${prefix}.csv${compress ? '.gz' : ''}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
