@@ -23,6 +23,7 @@ workflow PHYLOGENY_ESTIMATION {
 
     FAMSA_GUIDETREE(multi_fasta_snps)
     ch_versions = ch_versions.mix(FAMSA_GUIDETREE.out.versions) 
+    
     FASTTREE(multi_fasta_snps)
     ch_versions = ch_versions.mix(FASTTREE.out.versions)
 
