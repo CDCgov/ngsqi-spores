@@ -86,6 +86,9 @@ For instructions on creating an NCBI account and obtaining an API key, please vi
 - `--ncbi_email`: User's NCBI email
 - `--ncbi_api_key`: User's NCBI email
 - `--mode`: Select 'local' if providing local paths to reference genomes; otherwise, select 'download'
+- `--snpeffdb`: User provides path to snpeff database used in variant annotation
+- `--snpeffconf`: User provides path to snpeff database config used in variant annotation
+- `--simulation`: Optionally run simulation workflow to produce in silico dataset and quality control
 - `--outdir`: Name of output directory
 
 ### Running SPORES:
@@ -98,9 +101,13 @@ nextflow run main.nf \
    --fastas reference_samplesheet.csv \
    --ncbi_email <USER NCBI EMAIL> \
    --ncbi_api_key <API KEY> \
-   --mode <local> or <download> \
+   -profile singularity,cdc \
+   --simulation \
+   --postsim \
+   --mode <local/download> \
+   --snpeffdb <PATH> \
+   --snpeffconf <PATH> \
    --outdir <OUTDIR> \
-   -profile singularity,cdc
    
 ```
 

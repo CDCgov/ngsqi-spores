@@ -17,16 +17,22 @@ workflow QC {
     main:
     ch_versions = Channel.empty()
 
-    NANOCOMP(reads)
+    all_reads = reads
+        .map { meta, fastqs -> fastqs }
+        .flatten()
+        .collect()
+        .map { files -> tuple([id: "all"], files) }
+
+    NANOCOMP(all_reads)
     ch_versions = ch_versions.mix(NANOCOMP.out.versions)
-    
+
     NANOPLOT(reads)
     ch_versions = ch_versions.mix(NANOPLOT.out.versions)
     nanostats = NANOPLOT.out.txt
-    
+
     NANOQC(reads)
-    ch_versions = ch_versions.mix(NANOQC.out.versions) 
-   
+    ch_versions = ch_versions.mix(NANOQC.out.versions)
+
     emit:
     versions = ch_versions
     nanostats

@@ -1,5 +1,5 @@
 process NANOCOMP {
-    label 'process_low'
+    label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -107,7 +107,7 @@ process NANOCOMP {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        nanocomp: \$(echo \$(NanoComp --version 2>&1) | sed 's/^.*NanoComp //; s/Using.*\$//' )
+        nanocomp: \$(echo \$(NanoComp --version 2>&1) | sed 's/^.*NanoComp //; s/Using.*\$//' ))
     END_VERSIONS
     """
 
@@ -135,7 +135,7 @@ process NANOCOMP {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        nanocomp: \$(echo \$(NanoComp --version 2>&1) | sed 's/^.*NanoComp //; s/Using.*\$//' )
+        nanocomp: \$(echo \$(NanoComp --version 2>&1) | sed 's/^.*NanoComp //; s/Using.*\$//' ))
     END_VERSIONS
     """
 }

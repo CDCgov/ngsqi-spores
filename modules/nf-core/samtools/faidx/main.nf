@@ -11,7 +11,8 @@ process SAMTOOLS_FAIDX {
     tuple val(meta), path(fasta)
 
     output:
-    tuple val(meta), path ("*.{fa,fasta}") , emit: fa , optional: true
+    tuple val(meta), path ("*.{fa,fasta}") , emit: fa, optional: true
+    tuple val(meta), path ("*.sizes")      , emit: sizes, optional: true
     tuple val(meta), path ("*.fai")        , emit: fai, optional: true
     tuple val(meta), path ("*.gzi")        , emit: gzi, optional: true
     path "versions.yml"                    , emit: versions
@@ -36,9 +37,15 @@ process SAMTOOLS_FAIDX {
     stub:
     def match = (task.ext.args =~ /-o(?:utput)?\s(.*)\s?/).findAll()
     def fastacmd = match[0] ? "touch ${match[0][1]}" : ''
+    def get_sizes_command = get_sizes ? "touch ${fasta}.sizes" : ''
     """
     ${fastacmd}
     touch ${fasta}.fai
+    if [[ "${fasta.extension}" == "gz" ]]; then
+        touch ${fasta}.gzi
+    fi
+
+    ${get_sizes_command}
 
     cat <<-END_VERSIONS > versions.yml
 
