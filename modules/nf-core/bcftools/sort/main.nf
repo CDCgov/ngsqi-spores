@@ -36,13 +36,31 @@ process BCFTOOLS_SORT {
         $args \\
         $vcf
 
-    # Create index file for compressed VCFs
-    if [[ "${extension}" == *".gz" ]]; then
-        bcftools index -t ${prefix}.${extension}
-    else
-        # For uncompressed VCFs, create CSI index
-        bcftools index -c ${prefix}.${extension}
-    fi
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bcftools: \$(bcftools --version 2>&1 | head -n1 | sed 's/^.*bcftools //; s/ .*\$//')
+    END_VERSIONS
+    """
+
+    stub:
+    def args = task.ext.args ?: '--output-type z'
+    def prefix = task.ext.prefix ?: "${meta.id}"
+
+    def extension = args.contains("--output-type b") || args.contains("-Ob") ? "bcf.gz" :
+                    args.contains("--output-type u") || args.contains("-Ou") ? "bcf" :
+                    args.contains("--output-type z") || args.contains("-Oz") ? "vcf.gz" :
+                    args.contains("--output-type v") || args.contains("-Ov") ? "vcf" :
+                    "vcf"
+    def index = args.contains("--write-index=tbi") || args.contains("-W=tbi") ? "tbi" :
+                args.contains("--write-index=csi") || args.contains("-W=csi") ? "csi" :
+                args.contains("--write-index") || args.contains("-W") ? "csi" :
+                ""
+    def create_cmd = extension.endsWith(".gz") ? "echo '' | gzip >" : "touch"
+    def create_index = extension.endsWith(".gz") && index.matches("csi|tbi") ? "touch ${prefix}.${extension}.${index}" : ""
+
+    """
+    ${create_cmd} ${prefix}.${extension}
+    ${create_index}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

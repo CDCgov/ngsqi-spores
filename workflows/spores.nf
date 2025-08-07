@@ -57,10 +57,11 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 if (params.fastas) { ch_fastas = file(params.fastas) } else { exit 1, 'Reference genome not specified!' }
+if (params.postsim && !params.simulation) { exit 1, "--postsim cannot be used without enabling --simulation. Please set --simulation to true." }
 if (params.ncbi_email) { ncbi_email = params.ncbi_email } else { exit 1, 'NCBI email not specified!' }
 if (params.ncbi_api_key) { ncbi_api_key = params.ncbi_api_key } else { exit 1, 'NCBI API Key not specified!' }
-if (params.snpeff_db_dir) { snpeff_db_dir = params.snpeff_db_dir } else { exit 1, 'SnpEff database not specified!' }
-if (params.snpeff_config) { snpeff_config = params.snpeff_config } else { exit 1, 'SnpEff config not specified!' }
+if (params.snpeffdb) { snpeffdb = params.snpeffdb } else { exit 1, 'SnpEff database not specified!' }
+if (params.snpeffconf) { snpeffconf = params.snpeffconf } else { exit 1, 'SnpEff config not specified!' }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -82,7 +83,7 @@ workflow SPORES {
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
     reads = INPUT_CHECK.out.reads
 
-    VALIDATE_FASTAS (file(ch_fastas), params.download_script, params.ncbi_email, params.ncbi_api_key)
+    VALIDATE_FASTAS (file(ch_fastas), params.download_script, ncbi_email, ncbi_api_key)
     ch_versions = ch_versions.mix(VALIDATE_FASTAS.out.versions)
     fastas = VALIDATE_FASTAS.out.ref_path
     ref_fastas = VALIDATE_FASTAS.out.ref_fastas
@@ -92,6 +93,7 @@ workflow SPORES {
                             Quality Control - Raw
     ================================================================================
     */
+
     QC(reads)
     ch_versions = ch_versions.mix(QC.out.versions)
 
@@ -144,7 +146,7 @@ workflow SPORES {
                                 VARIANT ANNOTATION
     ================================================================================
     */
-    VARIANT_ANNOTATION(medaka_variants, params.snpeff_db_dir, params.snpeff_config)
+    VARIANT_ANNOTATION(medaka_variants, snpeffdb, snpeffconf)
     ch_versions = ch_versions.mix(VARIANT_ANNOTATION.out.versions)
 /*
     ================================================================================
@@ -164,6 +166,7 @@ workflow SPORES {
                                     Simulation
     ================================================================================
     */
+    if (params.simulation) {
     SIMULATION(fastas, trimmed,  params.altreference_script, read_counts)
     simulated_reads = SIMULATION.out.simulated_reads
     ch_versions = ch_versions.mix(SIMULATION.out.versions)
@@ -175,7 +178,7 @@ workflow SPORES {
     */
     QC_SIM(simulated_reads)
     ch_versions = ch_versions.mix(QC_SIM.out.versions)
-
+    }
 /*
     ================================================================================
                     Variant Calling and Annotation - Simulation
@@ -186,7 +189,7 @@ workflow SPORES {
     ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
     medaka_variants_sim = VARIANT_SIM.out.medaka_variants
 
-    VARIANT_ANN_SIM(medaka_variants_sim, params.snpeff_db_dir, params.snpeff_config)
+    VARIANT_ANN_SIM(medaka_variants_sim, snpeffdb, snpeffconf)
     ch_versions = ch_versions.mix(VARIANT_ANN_SIM.out.versions)
 
 /*

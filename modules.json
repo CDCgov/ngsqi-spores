@@ -20,6 +20,21 @@
                         "git_sha": "41dfa3f7c0ffabb96a6a813fe321c6d1cc5b6e46",
                         "installed_by": ["modules"]
                     },
+                    "bcftools/consensus": {
+                        "branch": "master",
+                        "git_sha": "41dfa3f7c0ffabb96a6a813fe321c6d1cc5b6e46",
+                        "installed_by": ["modules"]
+                    },
+                    "bcftools/filter": {
+                        "branch": "master",
+                        "git_sha": "41dfa3f7c0ffabb96a6a813fe321c6d1cc5b6e46",
+                        "installed_by": ["modules"]
+                    },
+                    "bcftools/index": {
+                        "branch": "master",
+                        "git_sha": "41dfa3f7c0ffabb96a6a813fe321c6d1cc5b6e46",
+                        "installed_by": ["modules"]
+                    },
                     "bcftools/merge": {
                         "branch": "master",
                         "git_sha": "41dfa3f7c0ffabb96a6a813fe321c6d1cc5b6e46",
@@ -70,6 +85,11 @@
                         "git_sha": "41dfa3f7c0ffabb96a6a813fe321c6d1cc5b6e46",
                         "installed_by": ["modules"]
                     },
+                    "famsa/align": {
+                        "branch": "master",
+                        "git_sha": "41dfa3f7c0ffabb96a6a813fe321c6d1cc5b6e46",
+                        "installed_by": ["modules"]
+                    },
                     "fastqc": {
                         "branch": "master",
                         "git_sha": "f4ae1d942bd50c5c0b9bd2de1393ce38315ba57c",
@@ -98,11 +118,6 @@
                     "minimap2/index": {
                         "branch": "master",
                         "git_sha": "a532706a19b3d83f14b1d48a6a815ed33eb48b0c",
-                        "installed_by": ["modules"]
-                    },
-                    "multiqc": {
-                        "branch": "master",
-                        "git_sha": "9e71d8519dfbfc328c078bba14d4bd4c99e39a94",
                         "installed_by": ["modules"]
                     },
                     "nanocomp": {
@@ -160,3 +175,4 @@
         }
     }
 }
+
