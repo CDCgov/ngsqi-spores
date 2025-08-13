@@ -22,7 +22,12 @@ This workflow is being built with [Nextflow DSL2](https://www.nextflow.io/docs/l
 3. Preprocess empirical long-read data by filtering reads based on quality and length (`chopper`)
 4. Prepare reference genomes for BWA alignment and variant calling (`NUCmer`,`bedtools`,`BWA`,`SAMtools`)
 5. Modify reference genomes to contain variants of interest and simulate long sequencing reads (`SeqIO`,`NanoSim`)
-6. Generate versions report
+6. Detect variants in empirical long read datasets (`Medaka`)
+7. Annotate detected variants (`SnpEff`)
+8. Merge variants across samples and produce multi-FASTA (`BCFTools`, `vcf2phylip`)
+9. Create phylogeny from multi-FASTA file (`FAMSA`, `RapidNJ`, `FastTree`)
+10. Perform QC, variant detection, and variant annotation on simulated datasets
+11. Generate versions report
 
 ## Usage
 
@@ -84,11 +89,13 @@ For instructions on creating an NCBI account and obtaining an API key, please vi
 - `--input`: Input long read samplesheet
 - `--fastas`: Input reference samplesheet containing variants of interest
 - `--ncbi_email`: User's NCBI email
-- `--ncbi_api_key`: User's NCBI email
+- `--ncbi_api_key`: User's NCBI api key
 - `--mode`: Select 'local' if providing local paths to reference genomes; otherwise, select 'download'
 - `--snpeffdb`: User provides path to snpeff database used in variant annotation
 - `--snpeffconf`: User provides path to snpeff database config used in variant annotation
 - `--simulation`: Optionally run simulation workflow to produce in silico dataset and quality control
+- `--postsim`: Optionally run variant calling, variant annotation and phylogeny estimation workflows on simulated reads. Can only be used if simulation parameter is true
+- `-profile`: Profiles for running the pipeline
 - `--outdir`: Name of output directory
 
 ### Running SPORES:
