@@ -1,11 +1,15 @@
 // Check input samplesheet and get read channels
 include { FASTA_CHECK } from '../../modules/local/fasta_check'
 include { REFDOWNLOAD } from '../../modules/local/ref_download.nf'
+include { REFDOWNLOAD_SINGLE } from '../../modules/local/ref_download_single.nf'
+
 
 workflow VALIDATE_FASTAS {
     take:
     fasta_samplesheet
+    reference_genome
     download_script
+    download_script_single
     ncbi_email
     ncbi_api_key
 
@@ -57,8 +61,15 @@ workflow VALIDATE_FASTAS {
             .set { ref_fastas }
     }
 
+    REFDOWNLOAD_SINGLE(reference_genome, download_script_single, ncbi_email, ncbi_api_key)
+    REFDOWNLOAD_SINGLE.out.genome_data_ref
+        .map { ref_accession, fasta_file -> 
+            def meta = tuple([ id: ref_accession], fasta_file) }
+        .set { ref_genome }
+
     emit:
     ref_path                                // channel: [ val(ID), clade, var_id, chrom, pos, var_seq, [fastas] ]
     ref_fastas                             // channel: [ val(ID), [ fastas ] ]
+    ref_genome
     versions = ch_versions                 // channel: [ versions.yml ]
 }

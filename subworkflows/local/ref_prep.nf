@@ -11,16 +11,14 @@ include { BWA_INDEX } from '../../modules/nf-core/bwa/index/main'
 include { PICARD_CREATESEQUENCEDICTIONARY as PICARD } from '../../modules/nf-core/picard/createsequencedictionary/main'
 include { SAMTOOLS_FAIDX as SAMTOOLS} from '../../modules/nf-core/samtools/faidx/main'
 
-
-
 workflow REF_PREP {
     take:
-    ref_fastas
+    ref_genome
 
     main:
     ch_versions = Channel.empty()
 
-    REF_FORMAT(ref_fastas)
+    REF_FORMAT(ref_genome)
     ref = REF_FORMAT.out.ref_tuple
 
     NUCMER(ref)
@@ -30,7 +28,7 @@ workflow REF_PREP {
     COORDSTOBED(delta)
     bed = COORDSTOBED.out.bed
 
-    BEDTOOLS_MASKFASTA( bed, ref_fastas)
+    BEDTOOLS_MASKFASTA( bed, ref_genome)
     masked = BEDTOOLS_MASKFASTA.out.fasta
     ch_versions = ch_versions.mix(BEDTOOLS_MASKFASTA.out.versions)
 

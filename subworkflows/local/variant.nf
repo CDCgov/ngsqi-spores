@@ -9,25 +9,14 @@ include { MEDAKA } from '../../modules/local/medaka/main'
 workflow VARIANT_CALLING {
     take:
     trimmed         // Channel: tuple val(meta), path("*_chopper.fastq.gz")
-    fastas          // Channel: tuple(reference, clade, var_id, chrom, pos, var_seq, fasta_file)
     masked          // Channel: tuple val(meta), path("*.fa") — masked FASTA
     fai             // Channel: tuple val(meta), path("*.fai") — index for masked FASTA
 
     main:
     ch_versions = Channel.empty()
 
-    //Filter clade I entries
-    clade1_fastas = fastas
-        .filter { reference, clade, var_id, chrom, pos, var_seq, fasta_file ->
-            clade == "1"
-        }
-        .map { reference, clade, var_id, chrom, pos, var_seq, fasta_file ->
-            def meta = [ id: reference ]
-            tuple([id: reference], meta)
-        }
-
     //Match masked FASTA and .fai index using clade I ID
-    clade1_masked = clade1_fastas
+    masked_fai = masked
         .combine(masked, by: 0)
         .map { id, meta, fasta_file -> tuple([id: meta.id], meta, fasta_file) }
         .combine(fai, by: 0)
@@ -35,7 +24,7 @@ workflow VARIANT_CALLING {
 
     //Pair each trimmed read with the reference+index
     ch_medaka_input = trimmed
-        .combine(clade1_masked)
+        .combine(masked_fai)
         .map { read_meta, reads, ref_meta, reference_bundle ->
             tuple(read_meta, reads, reference_bundle)
         }
@@ -47,6 +36,6 @@ workflow VARIANT_CALLING {
 
     emit:
     medaka_variants
-    clade1_masked
+    masked_fai
     versions = ch_versions
 }

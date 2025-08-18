@@ -51,12 +51,13 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoft
     */
 
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.fastas, params.download_script, params.altreference_script, params.vcf2phylip_script ]
+def checkPathParamList = [ params.input, params.fastas, params.download_script, params.download_script_single, params.altreference_script, params.vcf2phylip_script ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 if (params.fastas) { ch_fastas = file(params.fastas) } else { exit 1, 'Reference samplesheet not specified!' }
+if (params.reference_genome) { reference_genome = params.reference_genome } else { exit 1, 'Reference genome not specified!' }
 if (params.postsim && !params.simulation) { exit 1, "--postsim cannot be used without enabling --simulation. Please set --simulation to true." }
 if (params.ncbi_email) { ncbi_email = params.ncbi_email } else { exit 1, 'NCBI email not specified!' }
 if (params.ncbi_api_key) { ncbi_api_key = params.ncbi_api_key } else { exit 1, 'NCBI API Key not specified!' }
@@ -83,7 +84,7 @@ workflow SPORES {
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
     reads = INPUT_CHECK.out.reads
 
-    VALIDATE_FASTAS (file(ch_fastas), params.download_script, ncbi_email, ncbi_api_key)
+    VALIDATE_FASTAS (file(ch_fastas), reference_genome, params.download_script, params.download_script_single, ncbi_email, ncbi_api_key)
     ch_versions = ch_versions.mix(VALIDATE_FASTAS.out.versions)
     fastas = VALIDATE_FASTAS.out.ref_path
     ref_fastas = VALIDATE_FASTAS.out.ref_fastas
@@ -127,7 +128,7 @@ workflow SPORES {
                                 Reference Preparation
     ================================================================================
     */
-    REF_PREP (ref_fastas)
+    REF_PREP(VALIDATE_FASTAS.out.ref_genome)
     fai = REF_PREP.out.fai
     masked = REF_PREP.out.masked
     ch_versions = ch_versions.mix(REF_PREP.out.versions)
@@ -137,7 +138,7 @@ workflow SPORES {
                             Variant Calling and Annotation
     ================================================================================
     */
-    VARIANT_CALLING(trimmed, fastas, masked, fai)
+    VARIANT_CALLING(trimmed, masked, fai)
     medaka_variants = VARIANT_CALLING.out.medaka_variants
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 
@@ -153,7 +154,7 @@ workflow SPORES {
                                 Phylogeny Estimation
     ================================================================================
     */
-    PHYLOGENY_PREP(medaka_variants, VARIANT_CALLING.out.clade1_masked, params.vcf2phylip_script)
+    PHYLOGENY_PREP(medaka_variants, VARIANT_CALLING.out.masked_fai, params.vcf2phylip_script)
     multi_fasta_snps = PHYLOGENY_PREP.out.multi_fasta_snps
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 
@@ -185,7 +186,7 @@ workflow SPORES {
     ================================================================================
     */
     if (params.postsim) {
-    VARIANT_SIM(simulated_reads, fastas, masked, fai)
+    VARIANT_SIM(simulated_reads, masked, fai)
     ch_versions = ch_versions.mix(VARIANT_SIM.out.versions)
     medaka_variants_sim = VARIANT_SIM.out.medaka_variants
 
@@ -197,7 +198,7 @@ workflow SPORES {
                             Phylogeny Estimation - Simulation
     ================================================================================
     */
-    PHYLOGENY_PREP_SIM(medaka_variants_sim, VARIANT_SIM.out.clade1_masked, params.vcfSnpsToFasta_script)
+    PHYLOGENY_PREP_SIM(medaka_variants_sim, VARIANT_SIM.out.masked_fai, params.vcfSnpsToFasta_script)
     ch_versions = ch_versions.mix(PHYLOGENY_PREP_SIM.out.versions)
     multi_fasta_snps_sim = PHYLOGENY_PREP_SIM.out.multi_fasta_snps
 
