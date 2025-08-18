@@ -11,7 +11,7 @@ include { VCF2PHYLIP } from '../../modules/local/vcf2phylip'
 workflow PHYLOGENY_PREP {
     take:
     medaka_variants
-    clade1_masked
+    masked_fai
     vcf2phylip_script
 
     main:
@@ -21,26 +21,25 @@ workflow PHYLOGENY_PREP {
     BCFTOOLS_SORT(medaka_variants)
     ch_versions = ch_versions.mix(BCFTOOLS_SORT.out.versions)
 
-    clade1_masked_single = clade1_masked
-        .first()
+    masked = masked_fai
         .map { meta, files -> 
         [meta, files[0]]
         }
 
-    BCFTOOLS_NORM(BCFTOOLS_SORT.out.vcf,clade1_masked_single)
+    BCFTOOLS_NORM(BCFTOOLS_SORT.out.vcf,masked)
     ch_versions = ch_versions.mix(BCFTOOLS_NORM.out.versions)
 
     vcf_csi_with_meta = BCFTOOLS_NORM.out.vcf
         .join(BCFTOOLS_NORM.out.csi, by: 0)
-        .toList()
+        .collect()
         .map { list_of_items ->
-            def all_vcfs = list_of_items.collect { meta, vcf, csi -> vcf }
-            def all_csis = list_of_items.collect { meta, vcf, csi -> csi }
+            def all_vcfs = list_of_items.collect { it[1] }
+            def all_csis = list_of_items.collect { it[2] }
             def merge_meta = [id: 'merged_samples'] 
             [merge_meta, all_vcfs, all_csis]
         }
 
-    BCFTOOLS_MERGE(vcf_csi_with_meta,clade1_masked_single)
+    BCFTOOLS_MERGE(vcf_csi_with_meta,masked)
     ch_versions = ch_versions.mix(BCFTOOLS_MERGE.out.versions)
 
     VCF2PHYLIP(BCFTOOLS_MERGE.out.vcf_merged, vcf2phylip_script)
