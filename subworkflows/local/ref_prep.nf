@@ -28,7 +28,7 @@ workflow REF_PREP {
     COORDSTOBED(delta)
     bed = COORDSTOBED.out.bed
 
-    BEDTOOLS_MASKFASTA( bed, ref_genome)
+    BEDTOOLS_MASKFASTA(bed, ref_genome)
     masked = BEDTOOLS_MASKFASTA.out.fasta
     ch_versions = ch_versions.mix(BEDTOOLS_MASKFASTA.out.versions)
 
