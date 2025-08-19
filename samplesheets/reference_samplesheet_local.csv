@@ -1,9 +1,0 @@
-reference,clade,var_id,chrom,pos,var_seq,file_path
-GCA_016772135.1,1,fks1_hs1,CP060340.1,221636,TACTTGACTTTGTCCTTGAGAGATCCT,/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/MDB/spores/data/MDB_NCBI_Downloads/GCA_016772135.1_ASM1677213v1_genomic.fna
-GCF_003013715.1,2,fks1_hs1,NC_072812.1,2932580,AGGATCTCTCAAGgacaaagtcaagta,/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/MDB/spores/data/MDB_NCBI_Downloads/GCF_003013715.1_ASM301371v2_genomic.fna
-GCF_002775015.1,3,fks1_hs1,NW_021640162.1,2137598,AGGATCTCTCAAGgacaaagtcaagta,/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/MDB/spores/data/MDB_NCBI_Downloads/GCF_002775015.1_Cand_auris_B11221_V1_genomic.fna
-GCA_003014415.1,4,fks1_hs1,PYGM01000150.1,2609,TACTTGACTTTGTCCTTGAGAGATCCT,/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/MDB/spores/data/MDB_NCBI_Downloads/GCA_003014415.1_Cand_auris_B11243_genomic.fna
-GCA_016772135.1,1,fks1_hs2,CP060340.1,223781,GACTGGATTAGAAGTTATACCTTG,/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/MDB/spores/data/MDB_NCBI_Downloads/GCA_016772135.1_ASM1677213v1_genomic.fna
-GCF_003013715.1,2,fks1_hs2,NC_072812.1,2930438,CAAGGTATAACTTCTAATCCAGTC,/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/MDB/spores/data/MDB_NCBI_Downloads/GCF_003013715.1_ASM301371v2_genomic.fna
-GCF_002775015.1,3,fks1_hs2,NW_021640162.1,2135456,CAAGGTATAACTTCTAATCCAGTC,/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/MDB/spores/data/MDB_NCBI_Downloads/GCF_002775015.1_Cand_auris_B11221_V1_genomic.fna
-GCA_003014415.1,4,fks1_hs2,PYGM01000150.1,4754,GACTGGATTAGAAGTTATACCTTG,/scicomp/groups-pure/Projects/CSELS_NGSQI_insillico/MDB/spores/data/MDB_NCBI_Downloads/GCA_003014415.1_Cand_auris_B11243_genomic.fna
