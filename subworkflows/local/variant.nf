@@ -15,12 +15,10 @@ workflow VARIANT_CALLING {
     main:
     ch_versions = Channel.empty()
 
-    //Match masked FASTA and .fai index using clade I ID
+    //Match masked FASTA and .fai index
     masked_fai = masked
-        .combine(masked, by: 0)
-        .map { id, meta, fasta_file -> tuple([id: meta.id], meta, fasta_file) }
         .combine(fai, by: 0)
-        .map { id, meta, fasta_file, fai_file -> tuple(meta, [fasta_file, fai_file]) }
+        .map { meta, reference, fai -> tuple(meta, [reference, fai]) }
 
     //Pair each trimmed read with the reference+index
     ch_medaka_input = trimmed
