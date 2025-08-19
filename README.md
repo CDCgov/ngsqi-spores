@@ -88,6 +88,7 @@ For instructions on creating an NCBI account and obtaining an API key, please vi
 
 - `--input`: Input long read samplesheet
 - `--fastas`: Input reference samplesheet containing variants of interest
+- `--reference`: Reference genome accession for variant calling
 - `--ncbi_email`: User's NCBI email
 - `--ncbi_api_key`: User's NCBI api key
 - `--mode`: Select 'local' if providing local paths to reference genomes; otherwise, select 'download'
@@ -115,7 +116,7 @@ nextflow run main.nf \
    --snpeffdb <PATH> \
    --snpeffconf <PATH> \
    --outdir <OUTDIR> \
-   
+
 ```
 
 > **Warning**
