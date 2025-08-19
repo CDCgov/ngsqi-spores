@@ -1,7 +1,7 @@
 // Check input samplesheet and get read channels
 include { FASTA_CHECK } from '../../modules/local/fasta_check'
-include { REFDOWNLOAD } from '../../modules/local/ref_download.nf'
-include { REFDOWNLOAD_SINGLE } from '../../modules/local/ref_download_single.nf'
+include { REFDOWNLOAD } from '../../modules/local/refdownload.nf'
+include { REFDOWNLOAD_SINGLE } from '../../modules/local/refdownload_single.nf'
 
 
 workflow VALIDATE_FASTAS {
