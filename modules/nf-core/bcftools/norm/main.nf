@@ -12,10 +12,9 @@ process BCFTOOLS_NORM {
     tuple val(meta2), path(fasta)
 
     output:
-    tuple val(meta), path("*.norm.vcf.gz"), emit: vcf
-    tuple val(meta), path("*.tbi")                    , emit: tbi, optional: true
-    tuple val(meta), path("*.csi")                    , emit: csi, optional: false
-    path "versions.yml"                               , emit: versions
+    tuple val(meta), path("*.norm.vcf.gz"), path("*.csi"),  emit: vcf
+    tuple val(meta), path("*.csi"),                         emit: csi
+    path "versions.yml"                       , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
