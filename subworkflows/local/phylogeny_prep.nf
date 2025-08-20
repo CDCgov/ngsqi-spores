@@ -24,14 +24,21 @@ workflow PHYLOGENY_PREP {
 
     BCFTOOLS_NORM(vcf_sort, masked)
     ch_versions = ch_versions.mix(BCFTOOLS_NORM.out.versions)
-    vcf_norm = BCFTOOLS_NORM.out.vcf
-    csi = BCFTOOLS_NORM.out.csi
+    vcf = BCFTOOLS_NORM.out.vcf
 
-    vcf_csi = vcf_norm
-        .combine(csi, by: 0)
-        .map { meta, vcf_norm, csi -> tuple(meta, [vcf_norm, csi])}
+    merged_input = vcf
+        .toList()
+        .map { records ->
+            vcfs = records.collect { it[1] }  // vcf paths
+            csis = records.collect { it[2] }  // csi paths
+            meta = [id: 'merged']
+            tuple(meta, vcfs, csis)
+        }
 
-    BCFTOOLS_MERGE(vcf_csi, masked)
+
+    merged_input.view()
+
+    BCFTOOLS_MERGE(merged_input, masked)
     ch_versions = ch_versions.mix(BCFTOOLS_MERGE.out.versions)
     multi_vcf  = BCFTOOLS_MERGE.out.vcf_merged
 
