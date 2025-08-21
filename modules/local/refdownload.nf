@@ -3,7 +3,6 @@ process REFDOWNLOAD {
 
     input:
     tuple val(reference), val(clade), val(var_id), val(chrom), val(pos), val(var_seq)
-    path download_script
     val ncbi_email
     val ncbi_api_key
 
@@ -19,7 +18,7 @@ process REFDOWNLOAD {
     export NCBI_EMAIL="${ncbi_email}"
 
     # Run the download script
-    python ${download_script} ${reference} ${clade} ${var_id}
+    python download_script.py ${reference} ${clade} ${var_id}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

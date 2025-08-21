@@ -3,7 +3,6 @@ process REFDOWNLOAD_SINGLE {
 
     input:
     val reference
-    path download_script_single
     val ncbi_email
     val ncbi_api_key
 
@@ -19,7 +18,7 @@ process REFDOWNLOAD_SINGLE {
     export NCBI_EMAIL="${ncbi_email}"
 
     # Run the download script
-    python ${download_script_single} '${reference}'
+    python download_genome_single.py '${reference}'
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
