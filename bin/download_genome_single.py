@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from Bio import Entrez
 import sys
 import time

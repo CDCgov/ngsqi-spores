@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import argparse
 from Bio import SeqIO
 
@@ -18,9 +19,9 @@ def main():
     parser.add_argument('-p', '--pos', required=True, type=int, help='position to edit (0-based)')
     parser.add_argument('-s', '--var_seq', required=True, help='New sequence to insert')
     parser.add_argument('-o', '--output_fa', required=True, help='Output FASTA file')
-    
+
     args = parser.parse_args()
-    
+
     edit_sequence(args.ref_file, args.chrom, args.pos, args.var_seq, args.output_fa)
     print(f"Sequence edited successfully. Output written to {args.output_fa}")
 
