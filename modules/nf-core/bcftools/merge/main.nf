@@ -1,5 +1,6 @@
 process BCFTOOLS_MERGE {
     tag "$meta.id"
+    label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -30,8 +31,7 @@ process BCFTOOLS_MERGE {
                     "vcf"
 
     """
-    bcftools merge \\
-        $input \\
+    bcftools merge $input \\
         $args $fasta \\
         $args2 
         --threads $task.cpus \\
