@@ -8,8 +8,6 @@ workflow VALIDATE_FASTAS {
     take:
     fasta_samplesheet
     reference
-    download_script
-    download_script_single
     ncbi_email
     ncbi_api_key
 
@@ -53,7 +51,7 @@ workflow VALIDATE_FASTAS {
             }
             .set { fastas }
 
-        REFDOWNLOAD(fastas, download_script, ncbi_email, ncbi_api_key)
+        REFDOWNLOAD(fastas, ncbi_email, ncbi_api_key)
 
         REFDOWNLOAD.out.genome_data.set { ref_path }
         ch_versions = ch_versions.mix(REFDOWNLOAD.out.versions)
@@ -62,7 +60,7 @@ workflow VALIDATE_FASTAS {
             .set { ref_fastas }
     }
 
-    REFDOWNLOAD_SINGLE(reference, download_script_single, ncbi_email, ncbi_api_key)
+    REFDOWNLOAD_SINGLE(reference, ncbi_email, ncbi_api_key)
 
     ref_genome = REFDOWNLOAD_SINGLE.out.ref_genome
         .map {accession, reference ->

@@ -8,7 +8,6 @@ process VCF2PHYLIP {
 
     input:
     tuple val(meta), path(vcf)
-    path vcf2phylip_script
 
     output:
     tuple val(meta), path("*.fasta"), emit: fasta
@@ -20,9 +19,9 @@ process VCF2PHYLIP {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    
+
     """
-    python ${vcf2phylip_script} \\
+    python vcf2phylip.py \\
         --input ${vcf} \\
         --output-prefix ${prefix} \\
         --fasta \\
@@ -39,7 +38,7 @@ process VCF2PHYLIP {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    
+
     """
     touch ${prefix}_min4.fasta
 

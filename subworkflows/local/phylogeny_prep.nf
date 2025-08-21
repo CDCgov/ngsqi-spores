@@ -12,11 +12,9 @@ workflow PHYLOGENY_PREP {
     take:
     medaka_variants
     masked
-    vcf2phylip_script
 
     main:
     ch_versions = Channel.empty()
-    vcf2phylip_script = Channel.fromPath(params.vcf2phylip_script)
 
     BCFTOOLS_SORT(medaka_variants)
     ch_versions = ch_versions.mix(BCFTOOLS_SORT.out.versions)
@@ -26,23 +24,20 @@ workflow PHYLOGENY_PREP {
     ch_versions = ch_versions.mix(BCFTOOLS_NORM.out.versions)
     vcf = BCFTOOLS_NORM.out.vcf
 
-    merged_input = vcf
+    vcf_csis = vcf
         .toList()
         .map { records ->
-            vcfs = records.collect { it[1] }  // vcf paths
-            csis = records.collect { it[2] }  // csi paths
+            vcfs = records.collect { it[1] }
+            csis = records.collect { it[2] }
             meta = [id: 'merged']
             tuple(meta, vcfs, csis)
         }
 
-
-    merged_input.view()
-
-    BCFTOOLS_MERGE(merged_input, masked)
+    BCFTOOLS_MERGE(vcf_csis, masked)
     ch_versions = ch_versions.mix(BCFTOOLS_MERGE.out.versions)
     multi_vcf  = BCFTOOLS_MERGE.out.vcf_merged
 
-    VCF2PHYLIP(multi_vcf, vcf2phylip_script)
+    VCF2PHYLIP(multi_vcf)
     ch_versions = ch_versions.mix(VCF2PHYLIP.out.versions)
     multi_fasta_snps = VCF2PHYLIP.out.fasta
 
