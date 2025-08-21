@@ -11,7 +11,7 @@ process ALTREFERENCE {
 
     script:
     """
-    python edit_reference.py -i ${ref_file} -c ${chrom} -p ${pos} -s ${var_seq} -o "${ID}_${clade}_${var_id}_altreference.fna"
+    edit_reference.py -i ${ref_file} -c ${chrom} -p ${pos} -s ${var_seq} -o "${ID}_${clade}_${var_id}_altreference.fna"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

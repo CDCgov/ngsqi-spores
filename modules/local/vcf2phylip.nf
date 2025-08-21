@@ -21,7 +21,7 @@ process VCF2PHYLIP {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    python vcf2phylip.py \\
+    vcf2phylip.py \\
         --input ${vcf} \\
         --output-prefix ${prefix} \\
         --fasta \\

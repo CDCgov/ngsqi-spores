@@ -84,7 +84,7 @@ workflow SPORES {
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
     reads = INPUT_CHECK.out.reads
 
-    VALIDATE_FASTAS (file(ch_fastas), reference, params.download_script, params.download_script_single, ncbi_email, ncbi_api_key)
+    VALIDATE_FASTAS (file(ch_fastas), reference, ncbi_email, ncbi_api_key)
     ch_versions = ch_versions.mix(VALIDATE_FASTAS.out.versions)
     fastas = VALIDATE_FASTAS.out.ref_path
     ref_fastas = VALIDATE_FASTAS.out.ref_fastas
@@ -156,7 +156,7 @@ workflow SPORES {
                                 Phylogeny Estimation
     ================================================================================
     */
-    PHYLOGENY_PREP(medaka_variants, masked, params.vcf2phylip_script)
+    PHYLOGENY_PREP(medaka_variants, masked)
     multi_fasta_snps = PHYLOGENY_PREP.out.multi_fasta_snps
     ch_versions = ch_versions.mix(VARIANT_CALLING.out.versions)
 
@@ -170,7 +170,7 @@ workflow SPORES {
     ================================================================================
     */
     if (params.simulation) {
-    SIMULATION(fastas, trimmed,  params.altreference_script, read_counts)
+    SIMULATION(fastas, trimmed, read_counts)
     simulated_reads = SIMULATION.out.simulated_reads
     ch_versions = ch_versions.mix(SIMULATION.out.versions)
 
@@ -201,7 +201,7 @@ workflow SPORES {
                             Phylogeny Estimation - Simulation
     ================================================================================
     */
-    PHYLOGENY_PREP_SIM(medaka_variants_sim, masked, params.vcfSnpsToFasta_script)
+    PHYLOGENY_PREP_SIM(medaka_variants_sim, masked)
     ch_versions = ch_versions.mix(PHYLOGENY_PREP_SIM.out.versions)
     multi_fasta_snps_sim = PHYLOGENY_PREP_SIM.out.multi_fasta_snps
 

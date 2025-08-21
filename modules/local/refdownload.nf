@@ -13,16 +13,14 @@ process REFDOWNLOAD {
 
     script:
     """
-    # Set API credentials
     export NCBI_API_KEY="${ncbi_api_key}"
     export NCBI_EMAIL="${ncbi_email}"
 
-    # Run the download script
-    python download_script.py ${reference} ${clade} ${var_id}
+    download_script.py ${reference} ${clade} ${var_id}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        python_altreference: \$(echo \$(python --version 2>&1) | sed 's/^.*nanosim //; s/Using.*\$//')
+        python_altreference: \$(echo \$(python --version 2>&1) | sed 's/^.*python //; s/Using.*\$//')
     END_VERSIONS
     """
 }
