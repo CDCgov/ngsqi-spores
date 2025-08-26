@@ -23,7 +23,6 @@ process MEDAKA {
     """
     medaka_variant \\
         -t $task.cpus \\
-        $args \\
         -i $reads \\
         -r $assembly \\
         -m r1041_e82_400bps_hac_variant_v4.3.0 \\
