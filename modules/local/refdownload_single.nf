@@ -2,10 +2,8 @@ process REFDOWNLOAD_SINGLE {
     container 'quay.io/biocontainers/biopython:1.79'
 
     input:
-    val reference
-    val ncbi_email
-    val ncbi_api_key
-
+    tuple val(meta), val (reference_genome)
+    
     output:
     tuple val(reference), path("${reference}.fna"), emit: ref_genome
     path "${reference}.fna"
@@ -13,10 +11,12 @@ process REFDOWNLOAD_SINGLE {
 
     script:
     """
-    export NCBI_API_KEY="${ncbi_api_key}"
-    export NCBI_EMAIL="${ncbi_email}"
+    # Set API credentials
+    export NCBI_API_KEY="${params.ncbi_api_key}"
+    export NCBI_EMAIL="${params.ncbi_email}"
 
-    download_genome_single.py '${reference}'
+    # Run the download script
+    python ${params.download_script_single} '${reference_genome}'
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
