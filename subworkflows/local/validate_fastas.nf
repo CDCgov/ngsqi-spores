@@ -60,9 +60,9 @@ workflow VALIDATE_FASTAS {
             .set { ref_fastas }
     }
 
-    filepath_true = file(reference_genome).exists() && file(reference_genome).isFile()
+    filepath_true = file(reference).exists() && file(reference).isFile()
     ref_genome = Channel
-        .value(reference_genome)
+        .value(reference)
         .map { input ->
             def meta = [id: filepath_true ? file(input).baseName : input]
             return [meta, filepath_true ? file(input) : input]

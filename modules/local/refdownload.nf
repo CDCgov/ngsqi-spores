@@ -16,7 +16,7 @@ process REFDOWNLOAD {
     export NCBI_API_KEY="${ncbi_api_key}"
     export NCBI_EMAIL="${ncbi_email}"
 
-    download_script.py ${reference} ${clade} ${var_id}
+    download_genome.py ${reference} ${clade} ${var_id}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

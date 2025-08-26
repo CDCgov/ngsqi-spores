@@ -23,9 +23,9 @@ workflow REF_PREP {
 
     NUCMER(ref)
     ch_versions = ch_versions.mix(NUCMER.out.versions)
-    delta = NUCMER.out.delta
+    filtered_delta = NUCMER.out.filtered_delta
 
-    COORDSTOBED(delta)
+    COORDSTOBED(filtered_delta)
     bed = COORDSTOBED.out.bed
 
     BEDTOOLS_MASKFASTA(bed, ref_genome)
@@ -43,7 +43,7 @@ workflow REF_PREP {
     fai = SAMTOOLS.out.fai
 
    emit:
-   delta
+   filtered_delta
    bed
    masked
    fai

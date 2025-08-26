@@ -27,10 +27,10 @@ workflow PHYLOGENY_PREP {
     vcf_csis = vcf
         .toList()
         .map { records ->
-            vcfs = records.collect { it[1] }
-            csis = records.collect { it[2] }
-            meta = [id: 'merged']
-            tuple(meta, vcfs, csis)
+            def vcfs = records.collect { it[1] }
+            def csis = records.collect { it[2] }
+            def meta = [id: 'merged']
+            return tuple(meta, vcfs, csis)
         }
 
     BCFTOOLS_MERGE(vcf_csis, masked)

@@ -11,8 +11,9 @@ process NUCMER {
     tuple val(meta), path(ref), path(query)
 
     output:
-    tuple val(meta), path("*.delta") , emit: delta
+    tuple val(meta), path("*_raw.delta") , emit: delta
     tuple val(meta), path("*.coords"), emit: coords
+    tuple val(meta), path("*_filtered.delta"), emit: filtered_delta
     path "versions.yml"              , emit: versions
 
     when:
@@ -34,11 +35,16 @@ process NUCMER {
     fi
 
     nucmer \\
-        -p $prefix \\
+        -p ${prefix}_raw \\
         --coords \\
         $args \\
         $fasta_name_ref \\
-        $fasta_name_query
+        $fasta_name_ref
+
+    delta-filter \\
+        -l 1000 \\
+        -i 90 \\
+        ${prefix}_raw.delta > ${prefix}_filtered.delta
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -49,8 +55,9 @@ process NUCMER {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.delta
+    touch ${prefix}_raw.delta
     touch ${prefix}.coords
+    touch ${prefix}_fileterd.delta
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
