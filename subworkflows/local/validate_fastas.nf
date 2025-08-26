@@ -60,11 +60,19 @@ workflow VALIDATE_FASTAS {
             .set { ref_fastas }
     }
 
-    REFDOWNLOAD_SINGLE(reference, ncbi_email, ncbi_api_key)
-
-    ref_genome = REFDOWNLOAD_SINGLE.out.ref_genome
-        .map {accession, reference ->
-            def meta = tuple([ id: accession], reference) }
+    filepath_true = file(reference_genome).exists() && file(reference_genome).isFile()
+    ref_genome = Channel
+        .value(reference_genome)
+        .map { input ->
+            def meta = [id: filepath_true ? file(input).baseName : input]
+            return [meta, filepath_true ? file(input) : input]
+    }
+    if (!filepath_true) {
+        download_results = genome_channel | REFDOWNLOAD_SINGLE
+        ref_genome = download_results.genome_data_ref
+        versions = download_results.versions
+    }
+ 
 
     emit:
     ref_path                                // channel: [ val(ID), clade, var_id, chrom, pos, var_seq, [fastas] ]
