@@ -107,7 +107,7 @@ Now, you can run the pipeline using:
 nextflow run main.nf \
    --input ont_read_samplesheet.csv \
    --fastas reference_samplesheet.csv \
-   --reference <.fna> or <PATH> \
+   --reference <accession> or <PATH> \
    --ncbi_email <USER NCBI EMAIL> \
    --ncbi_api_key <API KEY> \
    -profile singularity,cdc \
