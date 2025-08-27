@@ -9,7 +9,6 @@ process BCFTOOLS_MERGE {
 
     input:
     tuple val(meta), path(vcfs), path(csis)
-    tuple val(meta2), path(fasta)
 
     output:
     tuple val(meta), path("*.{bcf,vcf}{,.gz}"), emit: vcf_merged
@@ -20,7 +19,6 @@ process BCFTOOLS_MERGE {
 
     script:
     def args = task.ext.args ?: ''
-    def args2 = task.ext.args2 ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     def input = (vcfs.collect().size() > 1) ? vcfs.sort{ it.name } : vcfs
@@ -32,10 +30,9 @@ process BCFTOOLS_MERGE {
 
     """
     bcftools merge $input \\
-        $args $fasta \\
-        $args2 \\
+        $args \\
         --threads $task.cpus \\
-        --output ${prefix}.${extension} 
+        --output ${prefix}.${extension}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
