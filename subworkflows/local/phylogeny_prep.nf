@@ -33,7 +33,7 @@ workflow PHYLOGENY_PREP {
             return tuple(meta, vcfs, csis)
         }
 
-    BCFTOOLS_MERGE(vcf_csis, masked)
+    BCFTOOLS_MERGE(vcf_csis)
     ch_versions = ch_versions.mix(BCFTOOLS_MERGE.out.versions)
     multi_vcf  = BCFTOOLS_MERGE.out.vcf_merged
 
