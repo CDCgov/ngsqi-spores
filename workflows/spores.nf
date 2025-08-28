@@ -51,7 +51,7 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoft
     */
 
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.fastas, params.download_script, params.download_script_single, params.altreference_script, params.vcf2phylip_script ]
+def checkPathParamList = [ params.input, params.fastas, params.vcf2phylip_script ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
@@ -84,7 +84,7 @@ workflow SPORES {
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
     reads = INPUT_CHECK.out.reads
 
-    VALIDATE_FASTAS (file(ch_fastas), reference, ncbi_email, ncbi_api_key)
+    VALIDATE_FASTAS (file(ch_fastas), params.reference, ncbi_email, ncbi_api_key)
     ch_versions = ch_versions.mix(VALIDATE_FASTAS.out.versions)
     fastas = VALIDATE_FASTAS.out.ref_path
     ref_fastas = VALIDATE_FASTAS.out.ref_fastas
