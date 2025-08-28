@@ -60,17 +60,24 @@ workflow VALIDATE_FASTAS {
             .set { ref_fastas }
     }
 
-    filepath_true = file(reference).exists() && file(reference).isFile()
-    ref_genome = Channel
-        .value(reference)
-        .map { input ->
-            def meta = [id: filepath_true ? file(input).baseName : input]
-            return [meta, filepath_true ? file(input) : input]
-    }
-    if (!filepath_true) {
-        download_results = genome_channel | REFDOWNLOAD_SINGLE
-        ref_genome = download_results.genome_data_ref
-        versions = download_results.versions
+    def filepath_true = reference && file(reference).exists() && file(reference).isFile()
+    if (filepath_true) {
+        ref_genome = Channel
+            .value(reference)
+            .map { input ->
+                def meta = [id: file(input).baseName]
+                return tuple(meta, file(input))
+            }
+    } else {
+        genome_channel = Channel
+            .value(reference)
+            .map { input ->
+                def meta = [id: input]
+                return tuple(meta, file(input))
+            }
+        REFDOWNLOAD_SINGLE(genome_channel)
+        ref_genome = REFDOWNLOAD_SINGLE.out.ref_genome
+        versions = REFDOWNLOAD_SINGLE.out.versions
     }
  
 
