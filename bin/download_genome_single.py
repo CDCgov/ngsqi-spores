@@ -32,11 +32,17 @@ def download_genome(reference_id):
             summary = Entrez.read(handle)
             handle.close()
 
-            ftp_path = summary['DocumentSummarySet']['DocumentSummary'][0]['FtpPath_GenBank']
+            doc_summary = summary['DocumentSummarySet']['DocumentSummary'][0]
+            # Choose appropriate FTP path based on accession type
+            if reference_id.startswith('GCF_'):
+                ftp_path = doc_summary.get('FtpPath_RefSeq') or doc_summary.get('FtpPath_GenBank')
+            elif reference_id.startswith('GCA_'):
+                ftp_path = doc_summary.get('FtpPath_GenBank') or doc_summary.get('FtpPath_RefSeq')
+            else:
+                ftp_path = doc_summary.get('FtpPath_GenBank') or doc_summary.get('FtpPath_RefSeq')
             if not ftp_path:
                 print(f"No FTP path found for reference_id: {reference_id}", file=sys.stderr)
                 return None
-
             # Convert FTP URL to HTTPS
             if ftp_path.startswith('ftp://'):
                 file_url = ftp_path.replace('ftp://', 'https://')
