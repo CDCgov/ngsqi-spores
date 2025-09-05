@@ -20,6 +20,16 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [PostSim](#postsim) - Performs quality control on simulated dataset
 - [Versions Report](#versions-report) - Generates a report containg versions of software used throughout the workflow
 
+**Output Nomenclature**
+
+Multiple output names contain sample-specific information derived from samplesheets like this example: B19617_GCA_016772135.1_1_fks1_hs1.
+
+Using this example, the name is structured as followed:
+- `B19617`: ONT dataset
+- `GCA_016772135.1`: NCBI genome accession
+- `1`: Clade number
+- `fks1_hs1`: Variant ID
+
 ## Input Validation
 
 Output files: no outputs generated
