@@ -11,11 +11,9 @@ process REFDOWNLOAD_SINGLE {
 
     script:
     """
-    # Set API credentials
     export NCBI_API_KEY="${params.ncbi_api_key}"
     export NCBI_EMAIL="${params.ncbi_email}"
 
-    # Run the download script
     download_genome_single.py ${reference}
 
     cat <<-END_VERSIONS > versions.yml

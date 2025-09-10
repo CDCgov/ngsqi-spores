@@ -2,8 +2,6 @@
 import argparse
 from Bio import SeqIO
 
-#chr pos should be entered as a 0 format position
-
 def edit_sequence(ref_file, chrom, pos, var_seq, output_fa):
     records = []
     for record in SeqIO.parse(ref_file, "fasta"):

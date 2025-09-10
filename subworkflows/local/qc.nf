@@ -12,7 +12,7 @@ include { NANOQC } from '../../modules/local/nanoqc.nf'
 
 workflow QC {
     take:
-    reads // channel: [ val(sampleID), [reads] ]
+    reads
 
     main:
     ch_versions = Channel.empty()

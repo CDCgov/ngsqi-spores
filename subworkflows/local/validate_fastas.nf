@@ -1,4 +1,9 @@
-// Check input samplesheet and get read channels
+/*
+========================================================================================
+    VALIDATE FASTAS
+========================================================================================
+*/
+
 include { FASTA_CHECK } from '../../modules/local/fasta_check'
 include { REFDOWNLOAD } from '../../modules/local/refdownload.nf'
 include { REFDOWNLOAD_SINGLE } from '../../modules/local/refdownload_single.nf'

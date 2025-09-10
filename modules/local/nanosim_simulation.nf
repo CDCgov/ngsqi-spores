@@ -16,10 +16,8 @@ process NANOSIMSIMULATION {
     
     script:
     """
-    # Copy model files from model directory to current working directory
     cp ${model_dir}/${model_prefix}* .
 
-    #Run simulator
     simulator.py genome \\
     -rg "${alt_ref}" \\
     -c "${model_prefix}" \\
@@ -30,7 +28,6 @@ process NANOSIMSIMULATION {
     > "${sample_id}_${ID}_${clade}_${var_id}_outputsim.log" \\
     2> "${sample_id}_${ID}_${clade}_${var_id}_errorsim.log"
 
-    # Find the aligned reads file and check if it exists before copying
     ALIGNED_FILE=\$(find . -name "${sample_id}_${ID}_${clade}_${var_id}_nanosim*aligned*reads.fastq" | head -n 1)
     
     if [ -n "\$ALIGNED_FILE" ] && [ -f "\$ALIGNED_FILE" ]; then

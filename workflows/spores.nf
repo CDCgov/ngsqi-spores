@@ -10,7 +10,6 @@ def logo = NfcoreTemplate.logo(workflow, params.monochrome_logs)
 def citation = '\n' + WorkflowMain.citation(workflow) + '\n'
 def summary_params = paramsSummaryMap(workflow)
 
-// Print parameter summary log to screen
 log.info logo + paramsSummaryLog(workflow) + citation
 
 WorkflowSpores.initialise(params, log)
@@ -50,11 +49,9 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoft
     ================================================================================
     */
 
-// Check input path parameters to see if they exist
 def checkPathParamList = [ params.input, params.fastas, params.vcf2phylip_script ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
-// Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 if (params.fastas) { ch_fastas = file(params.fastas) } else { exit 1, 'Reference samplesheet not specified!' }
 if (params.reference) { reference = params.reference } else { exit 1, 'Reference genome not specified!' }

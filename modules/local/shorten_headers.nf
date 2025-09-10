@@ -8,7 +8,6 @@ process SHORTENHEADERS {
 
     script:
     """
-    # Create a file with shortened headers (uncompressed)
     gunzip -c "${fastq}" | awk '{if(NR % 4 == 1 || NR % 4 == 3) {sub(/ .*/,""); print} else print}' > "shortened_${fastq.baseName}.fastq"
     """
 }
