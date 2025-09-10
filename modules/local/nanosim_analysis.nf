@@ -25,7 +25,6 @@ process READANALYSIS {
       > "${sample_id}_${ref_id}_outputaln.log" \\
       2> "${sample_id}_${ref_id}_erroraln.log"
 
-    # Create symlink for expected output
     ln -s "${sample_id}_${ref_id}_model" model_dir
 
     cat <<-END_VERSIONS > versions.yml

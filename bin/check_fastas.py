@@ -32,20 +32,6 @@ class RowChecker:
         except AssertionError as error:
             logger.error(f"Validation error: {error} in row {row}")
 
-    #def _validate_fasta(self, row):
-        # Retrieve the path to the FASTA file from the correct column
-        #fasta_path = row.get(self._path_col, "").strip()
-
-        # Debugging: Print the path being checked
-        #print(f"Checking FASTA file path: '{fasta_path}'")
-
-        #if not fasta_path:
-        #    raise AssertionError("FASTA file path is required.")
-        #if not Path(fasta_path).exists():
-        #    raise AssertionError(f"FASTA file does not exist: {fasta_path}")
-        #if not any(fasta_path.endswith(ext) for ext in self.VALID_FORMATS):
-        #    raise AssertionError(f"Unrecognized FASTA file extension: {fasta_path}. Allowed: {', '.join(self.VALID_FORMATS)}")
-
     def _validate_chrom(self, row):
         chrom = row.get(self._chrom_col, "").strip()
         if not chrom:
