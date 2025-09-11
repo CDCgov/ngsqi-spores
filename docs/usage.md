@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This document describes how to prepare input samplesheets and run the pipeline.
+This document describes how to prepare inputs and run the pipeline.
 
 ## ONT Read Samplesheet
 
@@ -18,7 +18,7 @@ Sample2,path/to/data/B21256.fastq.gz
 | Column    | Description                                                                                                                                                                            |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `sample`  | Custom sample name. Spaces in sample names are automatically converted to underscores (`_`) |
-| `fastq` | Full path to FastQ file for ONT long read dataset. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz"                                                             |
+| `fastq` | Full path to FastQ file for ONT long read dataset. File must be gzipped and have the extension ".fastq.gz" or ".fq.gz"                                                             |
 
 An [example samplesheet](../assets/samplesheets/read_samplesheet.csv) has been provided with the pipeline.
 
@@ -27,9 +27,9 @@ An [example samplesheet](../assets/samplesheets/read_samplesheet.csv) has been p
 The samplesheet for reference genomes and variants of interest should be formatted as follows:
 
 ```
-reference,clade,var_id,chrom,pos,var_seq
-GCA_016772135.1,1,fks1_hs1,CP060340.1,221636,TACTTGACTTTGTCCTTGAGAGATCCT
-GCF_003013715.1,2,fks1_hs1,NC_072812.1,2932580,AGGATCTCTCAAGgacaaagtcaagta
+reference,clade,var_id,chrom,pos,var_seq,file_path
+GCA_016772135.1,1,fks1_hs1,CP060340.1,221636,TACTTGACTTTGTCCTTGAGAGATCCT,/path/to/GCA_016772135.1_ASM1677213v1_genomic.fna
+GCF_003013715.1,2,fks1_hs1,NC_072812.1,2932580,AGGATCTCTCAAGgacaaagtcaagta,/path/to/GCF_002775015.1_Cand_auris_B11221_V1_genomic.fna
 ```
 | Column    | Description                                                                                                                                                                            |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -39,6 +39,7 @@ GCF_003013715.1,2,fks1_hs1,NC_072812.1,2932580,AGGATCTCTCAAGgacaaagtcaagta
 | `chrom` | Chromosome corresponding with variant of interest location                                                             |
 | `pos` | Numerical nucleotide position of variant of interest (use 0-based indexing)                                                             |
 | `var_seq` | Desired variant sequence of interest to be substituted in the given position                                                             |
+| `file_path` | File path to the reference genome (optional, only required for local mode)                                                             |
 
 An [example samplesheet](../assets/samplesheets/reference_samplesheet.csv) has been provided with the pipeline.
 
@@ -50,10 +51,16 @@ The typical command for running the pipeline is as follows:
 nextflow run main.nf \
    --input ont_read_samplesheet.csv \
    --fastas reference_samplesheet.csv \
+   --reference <accession> or <PATH> \
    --ncbi_email <USER NCBI EMAIL> \
    --ncbi_api_key <API KEY> \
+   -profile singularity,cdc \
+   --simulation \
+   --postsim \
+   --mode <local/download> \
+   --snpeffdb <PATH> \
+   --snpeffconf <PATH> \
    --outdir <OUTDIR> \
-   -profile singularity,cdc
 ```
 
 This will launch the pipeline with the `singularity` configuration profile. See below for more information about profiles.
@@ -75,27 +82,30 @@ Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <
 Do not use `-c <file>` to specify parameters as this will result in errors. Custom config files specified with `-c` must only be used for [tuning process resource specifications](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources), other infrastructural tweaks (such as output directories), or module arguments (args).
 :::
 
-The above pipeline run specified with a params file in yaml format:
+The below command runs a minimal version of the pipeline with specified params in the test.config file:
 
 ```bash
-nextflow run spores -profile singularity -params-file params.yaml
+nextflow run main.nf -profile test,singularity --outdir <OUTDIR>
 ```
 
-with `params.yaml` containing:
+with `test.config` containing:
 
 ```yaml
-input: 'ont_read_samplesheet.csv'
-fastas: 'reference_samplesheet.csv'
-ncbi_email: 'example@email.com'
-outdir: 'results'
+input = 'ont_read_samplesheet.csv'
+fastas = 'reference_samplesheet.csv'
+ncbi_email = 'example@email.com'
+ncbi_api_key = '<insert ncbi key here>'
+postsim = true or false
+mode = 'local' or 'download'
+simulation = true or false
+snpeffdb = "$projectDir/assets/snpeffdb"
+snpeffconf = "$projectDir/assets/snpeffdb/snpEff.config"
 <...>
 ```
 
-You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
-
 ### Updating the pipeline
 
-When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
+When you run the below command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
 
 ```bash
 nextflow pull ngsqi/spores
