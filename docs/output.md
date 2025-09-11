@@ -22,13 +22,16 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 **Output Nomenclature**
 
-Multiple output names contain sample-specific information derived from samplesheets like this example: B19617_GCA_016772135.1_1_fks1_hs1.
-
-Using this example, the name is structured as followed:
-- `B19617`: ONT dataset
-- `GCA_016772135.1`: NCBI genome accession
-- `1`: Clade number
-- `fks1_hs1`: Variant ID
+Output names are formatted as in the following example:
+```
+B19617_GCA_016772135.1_1_fks1_hs1
+```
+| Column    | Description                                                                                                                                                                            |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `B19617`  | ONT dataset |
+| `GCA_016772135.1` | NCBI genome accession                                                             |
+| `1` | Clade number                                                             |
+| `fks1_hs1` | Variant ID                                                             |
 
 ## Input Validation
 
@@ -52,6 +55,8 @@ Output files:
     * `sample.amb`
     * `sample.ann`
     * `sample.bwt`
+    * `sample.bed`
+    * `sample.coords`
 
 [picard](https://github.com/broadinstitute/picard) Generates genome dictionary file
 
@@ -78,114 +83,195 @@ Output files: no outputs generated
 Output files:
 * `qc/`
     * `raw/` or `clean/`
-        * `nanocomp/sample/`
-            * `NanoComp_lengths_violin.html`
-            * `NanoComp_log_length_violin.html`
-            * `NanoComp_N50.html`
-            * `NanoComp_number_of_reads.html`
-            * `NanoComp_OverlayHistogram.html`
-            * `NanoComp_OverlayHistogram_Normalized.html`
-            * `NanoComp_OverlayLogHistogram.html`
-            * `NanoComp_OverlayLogHistogram_Normalized.html`
-            * `NanoComp_quals_violin.html`
-            * `NanoComp-report.html`
-            * `NanoComp_total_throughput.html`
-            * `NanoStats.txt`
-        * `nanoplot/sample/`
-            * `LengthvsQualityScatterPlot_dot.html`
+        * `nanocomp/all/reports`
+            * `allNanoComp_lengths_violin.html`
+            * `allNanoComp_log_length_violin.html`
+            * `allNanoComp_N50.html`
+            * `allNanoComp_number_of_reads.html`
+            * `allNanoComp_OverlayHistogram.html`
+            * `allNanoComp_OverlayHistogram_Normalized.html`
+            * `allNanoComp_OverlayLogHistogram.html`
+            * `allNanoComp_OverlayLogHistogram_Normalized.html`
+            * `allNanoComp_quals_violin.html`
+            * `allNanoComp-report.html`
+            * `allNanoComp_total_throughput.html`
+        * `nanocomp/all/logs`
+            * `allNanoStats.txt`
+        * `nanoplot/sample/figures`
             * `LengthvsQualityScatterPlot_dot.png`
-            * `LengthvsQualityScatterPlot_kde.html`
             * `LengthvsQualityScatterPlot_kde.png`
-            * `NanoPlot_20250520_1032.log`
-            * `NanoPlot-report.html`
-            * `NanoStats.txt`
-            * `Non_weightedHistogramReadlength.html`
             * `Non_weightedHistogramReadlength.png`
-            * `Non_weightedLogTransformed_HistogramReadlength.html`
             * `Non_weightedLogTransformed_HistogramReadlength.png`
-            * `WeightedHistogramReadlength.html`
-            * `WeightedHistogramReadlength.png`
-            * `WeightedLogTransformed_HistogramReadlength.html`
             * `WeightedLogTransformed_HistogramReadlength.png`
-            * `Yield_By_Length.html`
+            * `WeightedHistogramReadlength.png`
             * `Yield_By_Length.png`
-        * `nanoqc/sample/`
-            * `nanoQC.html`
+        * `nanoplot/sample/reports`
+            * `LengthvsQualityScatterPlot_dot.html`
+            * `LengthvsQualityScatterPlot_kde.html`
+            * `NanoPlot-report.html`
+            * `Non_weightedHistogramReadlength.html`
+            * `Non_weightedLogTransformed_HistogramReadlength.html`
+            * `WeightedHistogramReadlength.html`
+            * `WeightedLogTransformed_HistogramReadlength.html`
+            * `Yield_By_Length.html`
+        * `nanoplot/sample/logs`
+            * `NanoStats.txt`
+        * `nanoqc/sample/logs`
             * `NanoQC.log`
-
-
-[Hostile](https://github.com/bede/hostile) Removes host reads to ensure that only relevant sequence data are retained
-
-Output files:
-* `QC/hostile/`
-    * `sample.hostile.log`
-
-[FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) generates quality reports on raw and cleaned reads. These reports include key metrics such as per-base sequence quality, GC content, and sequence length distribution. 
-
-Output files:
-* `QC/fastqc/`
-    * `clean/`
-      * `sample.html`
-    * `raw/`
-      * `sample.html`
+        * `nanoqc/sample/reports`
+            * `nanoQC.html`
 
 ## Simulation
 
 **AltReference** Incorporates variant of interest into reference genome sequence using BioPython SeqIO
 
 Output files:
-* `variant/`
+* `simulation/alt_reference/`
     * `sample.fna`
 
 [NanoSim](https://github.com/bcgsc/NanoSim) Simulates long reads from input reference genome with variants, using error model based on empirical dataset
 
 Output files:
-* `simulated/reads`
-    * `sample.fastq.gz`
-    * `sample_errorsim.log`
-    * `sample_outputsim.log`
+* `simulation/nanosim/`
+    * `logs/sample/`
+        * `sample_errorsim.log`
+        * `sample_outputsim.log`
+    * `reads/sample/`
+        * `sample.fastq.gz`
+
+## Variant Detection and Annotation
+
+[medaka](https://github.com/nanoporetech/medaka) Calls variants in nanopore sequencing data
+
+Output files:
+* `variant/medaka/sample`
+    * `medaka.annotated.vcf`
+
+[SNPEff](https://pcingola.github.io/SnpEff/) Annotates genetic variants and predict functional effects
+
+Output files:
+* `variant/annotated`
+    * `sample.ann.vcf`
+
+[vcf2phylip](https://github.com/edgardomortiz/vcf2phylip) Converts VCF formatted files to FASTA alignments
+
+Output files:
+* `variant/multifasta`
+    * `merged.min1.fasta`
+
+## Phylogeny Estimation
+
+[FAMSA](https://github.com/refresh-bio/FAMSA) Generates phylogenetic trees and distance matrices using a progressive algorithm
+
+Output files:
+* `phylogeny/famsa_dist/`
+    * `merged.csv`
+* `phylogeny/famsa_guidetree/`
+    * `merged_sl.dnd`
+    * `merged_upgma.dnd`
+
+[FastTree](https://github.com/morgannprice/fasttree) Generates approximately-maximum-likelihood phylogenetic trees
+
+Output files:
+* `phylogeny/fasttree`
+    * `fasttree_phylogeny.tre`
+
+[RapidNJ](https://github.com/johnlees/rapidnj) Uses an efficient neighbour-joining algorithm to calculate phylogenetic relationships
+
+Output files:
+* `phylogeny/rapidnj`
+    * `alignment.sth`
+    * `rapidnj_phylogeny.tre`
 
 ## PostSim
 
+## Quality Control
+
 [nanopack](https://github.com/wdecoster/nanopack) Generates QC reports and plots
 
-Output files:
 * `simulation/qc/`
     * `raw/` or `clean/`
-        * `nanocomp/sample/`
-            * `NanoComp_lengths_violin.html`
-            * `NanoComp_log_length_violin.html`
-            * `NanoComp_N50.html`
-            * `NanoComp_number_of_reads.html`
-            * `NanoComp_OverlayHistogram.html`
-            * `NanoComp_OverlayHistogram_Normalized.html`
-            * `NanoComp_OverlayLogHistogram.html`
-            * `NanoComp_OverlayLogHistogram_Normalized.html`
-            * `NanoComp_quals_violin.html`
-            * `NanoComp-report.html`
-            * `NanoComp_total_throughput.html`
-            * `NanoStats.txt`
-        * `nanoplot/sample/`
-            * `LengthvsQualityScatterPlot_dot.html`
+        * `nanocomp/all/reports`
+            * `allNanoComp_lengths_violin.html`
+            * `allNanoComp_log_length_violin.html`
+            * `allNanoComp_N50.html`
+            * `allNanoComp_number_of_reads.html`
+            * `allNanoComp_OverlayHistogram.html`
+            * `allNanoComp_OverlayHistogram_Normalized.html`
+            * `allNanoComp_OverlayLogHistogram.html`
+            * `allNanoComp_OverlayLogHistogram_Normalized.html`
+            * `allNanoComp_quals_violin.html`
+            * `allNanoComp-report.html`
+            * `allNanoComp_total_throughput.html`
+        * `nanocomp/all/logs`
+            * `allNanoStats.txt`
+        * `nanoplot/sample/figures`
             * `LengthvsQualityScatterPlot_dot.png`
-            * `LengthvsQualityScatterPlot_kde.html`
             * `LengthvsQualityScatterPlot_kde.png`
-            * `NanoPlot_20250520_1032.log`
-            * `NanoPlot-report.html`
-            * `NanoStats.txt`
-            * `Non_weightedHistogramReadlength.html`
             * `Non_weightedHistogramReadlength.png`
-            * `Non_weightedLogTransformed_HistogramReadlength.html`
             * `Non_weightedLogTransformed_HistogramReadlength.png`
-            * `WeightedHistogramReadlength.html`
-            * `WeightedHistogramReadlength.png`
-            * `WeightedLogTransformed_HistogramReadlength.html`
             * `WeightedLogTransformed_HistogramReadlength.png`
-            * `Yield_By_Length.html`
+            * `WeightedHistogramReadlength.png`
             * `Yield_By_Length.png`
-        * `nanoqc/sample/`
-            * `nanoQC.html`
+        * `nanoplot/sample/reports`
+            * `LengthvsQualityScatterPlot_dot.html`
+            * `LengthvsQualityScatterPlot_kde.html`
+            * `NanoPlot-report.html`
+            * `Non_weightedHistogramReadlength.html`
+            * `Non_weightedLogTransformed_HistogramReadlength.html`
+            * `WeightedHistogramReadlength.html`
+            * `WeightedLogTransformed_HistogramReadlength.html`
+            * `Yield_By_Length.html`
+        * `nanoplot/sample/logs`
+            * `NanoStats.txt`
+        * `nanoqc/sample/logs`
             * `NanoQC.log`
+        * `nanoqc/sample/reports`
+            * `nanoQC.html`
+
+## Variant Detection and Annotation
+
+[medaka](https://github.com/nanoporetech/medaka) Calls variants in nanopore sequencing data
+
+Output files:
+* `variant/medaka/sample`
+    * `medaka.annotated.vcf`
+
+[SNPEff](https://pcingola.github.io/SnpEff/) Annotates genetic variants and predict functional effects
+
+Output files:
+* `variant/annotated`
+    * `sample.ann.vcf`
+
+[vcf2phylip](https://github.com/edgardomortiz/vcf2phylip) Converts VCF formatted files to FASTA alignments
+
+Output files:
+* `variant/multifasta`
+    * `merged.min1.fasta`
+
+## Phylogeny Estimation
+
+[FAMSA](https://github.com/refresh-bio/FAMSA) Generates phylogenetic trees and distance matrices using a progressive algorithm
+
+Output files:
+* `phylogeny/famsa_dist/`
+    * `merged.csv`
+* `phylogeny/famsa_guidetree/`
+    * `merged_sl.dnd`
+    * `merged_upgma.dnd`
+
+[FastTree](https://github.com/morgannprice/fasttree) Generates approximately-maximum-likelihood phylogenetic trees
+
+Output files:
+* `phylogeny/fasttree`
+    * `fasttree_phylogeny.tre`
+
+[RapidNJ](https://github.com/johnlees/rapidnj) Uses an efficient neighbour-joining algorithm to calculate phylogenetic relationships
+
+Output files:
+* `phylogeny/rapidnj`
+    * `alignment.sth`
+    * `rapidnj_phylogeny.tre`
 
 ## Versions Report
 
