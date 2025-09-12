@@ -6,8 +6,6 @@ This document describes the output produced by the pipeline
 
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
 
-<!-- TODO nf-core: Write this documentation describing your workflow's output -->
-
 ## Pipeline overview
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
@@ -24,7 +22,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 **Output Nomenclature**
 
-Output names are formatted as in the following example:
+Output file names adhere to the format illustrated in the example below:
 ```
 B19617_GCA_016772135.1_1_fks1_hs1
 ```
@@ -279,11 +277,11 @@ Output files:
 
 Output files:
 * `pipeline_info/`
-    * `execution_report_2025-09-04_19-25-01.html`
-    * `execution_timeline_2025-09-04_19-25-01.html`
-    * `execution_trace_2025-09-04_19-25-01.txt`
+    * `execution_report.html`
+    * `execution_timeline.html`
+    * `execution_trace.txt`
     * `fastas.valid.csv`
-    * `params_2025-09-05_03-32-47.json`
-    * `pipeline_dag_2025-09-04_19-25-01.html`
+    * `params.json`
+    * `pipeline_dag.html`
     * `samplesheet.valid.csv`
     * `software_versions.yml`
