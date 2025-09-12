@@ -236,19 +236,19 @@ Output files:
 [medaka](https://github.com/nanoporetech/medaka) Calls variants in nanopore sequencing data
 
 Output files:
-* `variant/medaka/sample`
+* `simulation/variant/medaka/sample`
     * `medaka.annotated.vcf`
 
 [SNPEff](https://pcingola.github.io/SnpEff/) Annotates genetic variants and predict functional effects
 
 Output files:
-* `variant/annotated`
+* `simulation/variant/annotated`
     * `sample.ann.vcf`
 
 [vcf2phylip](https://github.com/edgardomortiz/vcf2phylip) Converts VCF formatted files to FASTA alignments
 
 Output files:
-* `variant/multifasta`
+* `simulation/variant/multifasta`
     * `merged.min1.fasta`
 
 ## Phylogeny Estimation
@@ -256,22 +256,22 @@ Output files:
 [FAMSA](https://github.com/refresh-bio/FAMSA) Generates phylogenetic trees and distance matrices using a progressive algorithm
 
 Output files:
-* `phylogeny/famsa_dist/`
+* `simulation/phylogeny/famsa_dist/`
     * `merged.csv`
-* `phylogeny/famsa_guidetree/`
+* `simulation/phylogeny/famsa_guidetree/`
     * `merged_sl.dnd`
     * `merged_upgma.dnd`
 
 [FastTree](https://github.com/morgannprice/fasttree) Generates approximately-maximum-likelihood phylogenetic trees
 
 Output files:
-* `phylogeny/fasttree`
+* `simulation/phylogeny/fasttree`
     * `fasttree_phylogeny.tre`
 
 [RapidNJ](https://github.com/johnlees/rapidnj) Uses an efficient neighbour-joining algorithm to calculate phylogenetic relationships
 
 Output files:
-* `phylogeny/rapidnj`
+* `simulation/phylogeny/rapidnj`
     * `alignment.sth`
     * `rapidnj_phylogeny.tre`
 
@@ -279,4 +279,11 @@ Output files:
 
 Output files:
 * `pipeline_info/`
+    * `execution_report_2025-09-04_19-25-01.html`
+    * `execution_timeline_2025-09-04_19-25-01.html`
+    * `execution_trace_2025-09-04_19-25-01.txt`
+    * `fastas.valid.csv`
+    * `params_2025-09-05_03-32-47.json`
+    * `pipeline_dag_2025-09-04_19-25-01.html`
+    * `samplesheet.valid.csv`
     * `software_versions.yml`
