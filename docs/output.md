@@ -17,7 +17,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 - [Preprocessing](#preprocessing) - Filters reads based on quality and length
 - [Quality Control](#quality-control) - Performs quality control on long read data before and after preprocessing
 - [Simulation](#simulation) - Simulates long read datasets that contain genetic variants of interest
-- [Variant Detection and Annotation](#variant-detection) - Calls and annotates variants in empirical and simulated datasets
+- [Variant Detection and Annotation](#variant-detection-and-annotation) - Calls and annotates variants in empirical and simulated datasets
 - [Phylogeny Estimation](#phylogeny-estimation) - Generates phylogenetic trees and distance matrices for empirical and simulated datasets
 - [PostSim](#postsim) - Performs quality control on simulated dataset
 - [Versions Report](#versions-report) - Generates a report containg versions of software used throughout the workflow
